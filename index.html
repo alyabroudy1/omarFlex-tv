@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie App</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="mainView">
+        <div id="searchView" class="selectableRow">
+            <input type="text" id="searchField" placeholder="Search Movies..." class="selectableCol">
+            <button id="searchButton" class="selectableCol">Search</button>
+            <p id="keyView"></p>
+        </div>
+        <div id="categoriesContainer"></div>
+        <div id="sublistContainer"></div>
+    </div>
+    
+    <div id="seasonsContainer" style="display: none;"></div>
+<div id="seriesView" style="display: none;">
+    <img id="image" alt="Movie Poster">
+    <h2 id="title"></h2>
+    <p id="description"></p>
+    <div id="sublistContainer"></div>
+</div>
+<div id="seasonView" style="display: none;">
+    <img id="image" alt="Movie Poster">
+    <h2 id="title"></h2>
+    <p id="description"></p>
+    <div id="sublistContainer"></div>
+</div>
+
+<div id="episodeView" style="display: none;">
+    <img id="image" alt="Movie Poster">
+    <h2 id="title"></h2>
+    <p id="description"></p>
+    <div id="sublistContainer"></div>
+</div>
+
+<div id="filmView" style="display: none;">
+    <img id="image" alt="Movie Poster">
+    <h2 id="title"></h2>
+    <p id="description"></p>
+    <div id="sublistContainer"></div>
+</div>
+
+<div id="videoView" style="display: none; position: relative;">
+    <!-- <h2 id="episodeTitle"></h2>
+    <p id="episodeDescription"></p>
+    <div id="resolutionsContainer"></div> -->
+    <video id="videoPlayer" controls autoplay>
+            <!-- <source src="mov_bbb.mp4" type="video/mp4">
+            <source src="mov_bbb.ogg" type="video/ogg">
+            Your browser does not support HTML video. -->
+      </video>
+</div>
+    
+
+    <script src="js/script.js"></script>
+</body>
+</html>

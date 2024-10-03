@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns:tizen="http://tizen.org/ns/widgets" xmlns="http://www.w3.org/ns/widgets" id="http://www.omerFlex.de" version="1.0.0" viewmodes="maximized">
+    <tizen:application id="D4PLlQ9f5e.OmerFlex" package="D4PLlQ9f5e" required_version="2.1"/>
+    <author href="https://www.omerflex.de" email="freesyriar1@gmail.com">mmss</author>
+    <content src="index.html"/>
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <tizen:privilege name="http://tizen.org/privilege/network.http"/>
+    <tizen:privilege name="http://tizen.org/privilege/network.protocol"/>
+    <access origin="*" subdomains="true"/>
+    <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
+    <icon src="icon.png"/>
+    <tizen:metadata key="http://tizen.org/metadata/app_ui_type/base_screen_resolution" value="extensive"/>
+    <name>omerflex.com</name>
+    <tizen:profile name="tv-samsung"/>
+    <tizen:setting screen-orientation="landscape" context-menu="enable" background-support="enable" encryption="disable" install-location="auto" hwkey-event="enable"/>
+</widget>

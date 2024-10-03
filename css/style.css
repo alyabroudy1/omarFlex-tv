@@ -1,0 +1,95 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: white; /* Sets the background color to white */
+    color: black; /* Optional: sets text color to black for better contrast */
+    font-family: Arial, sans-serif;
+}
+
+#videoView {
+    width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
+    display: flex; /* Flexbox for easy centering */
+    justify-content: center;
+    align-items: center;
+}
+
+#videoPlayer {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures video covers the entire space */
+    background-color: black; /* Adds a background in case the video doesn't fill the space */
+}
+
+/* Basic styling for selectable items */
+.highlighted {
+    background-color: rgb(180, 12, 12);
+
+    font-size: 20px;
+    border: 2px solid transparent;
+    transition: border-color 0.3s;
+    border-color: rgb(243, 13, 13);
+    border-width: 4px; /* Change the value to make it thicker */
+    border-style: solid; /* Make sure border style is solid */
+}
+
+/* Style for focused items */
+.focused {
+    border-color: rgb(243, 13, 13);
+    border-width: 4px; /* Change the value to make it thicker */
+    border-style: solid; /* Make sure border style is solid */
+}
+
+#search-bar {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+#search-input {
+    padding: 10px;
+    width: 60%;
+    font-size: 18px;
+}
+
+#search-button {
+    padding: 10px;
+    font-size: 18px;
+    margin-left: 10px;
+}
+
+.category {
+    margin-top: 20px;
+}
+
+.category h2 {
+    margin-left: 20px;
+    font-size: 24px;
+}
+
+.movie-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+.movie-card {
+    width: 150px;
+    margin-right: 10px;
+    text-align: center;
+    background-color: #222;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.movie-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.movie-card h4 {
+    font-size: 16px;
+    margin-top: 8px;
+    color: #fff;
+}
