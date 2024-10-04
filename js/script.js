@@ -866,20 +866,89 @@ document.body.appendChild(objElem);
 
     // var avplay = webapis.avplay;
 
+
+// Example usage
+// const input = "https://www.google.com||user-agent=android 7&referer=google.com";
+
+// Output: 
+// {
+//   url: 'https://www.google.com',
+//   params: [{ 'user-agent': 'android 7' }, { referer: 'google.com' }]
+// }
+
+
+
     // Initialize the AVPlay object
-    // webapis.avplay.open('https://airmax.boats:443/airmaxtv1122/airmaxtv2211/306.ts');
-    webapis.avplay.open('https://video.alkawthartv.ir/original/2023/06/11/638221028428011214video.mp4');
+    let iptvurl = 'https://airmax.boats:443/airmaxtv1122/airmaxtv2211/306.ts||user-agent=airmaxtv';
+    // let link = 'https://varcdnx10-18.erea12.shop:82/d/nvrtwaiubgeyf3tkampif3ypo4c5b4ajjcpfx2khekomyg5pfa2docvyqvxgfcmhwvuqlovp/_WeCima.Show_Al.Ameel.S01E34.720p.mp4';
+        // webapis.avplay.open();
     
-    setAVPlayerListeners();
+
+    const result = parseUrlWithParams(iptvurl);
+
+console.log(result);
+
+webapis.avplay.open(result.url);
+// webapis.avplay.open(link);
+setAVPlayerListeners();
+
+
+// // 
+if (result.params.length > 0) {
+        result.params.forEach(param => {
+            for (let key in param) {
+                if (key.toLowerCase() === 'user-agent') {
+                    webapis.avplay.setStreamingProperty('USER_AGENT',  param[key]);
+                }
+                console.log(`${key} => ${param[key]}`);
+            }
+        });
+    }
+
+    // var json = {
+    //     // "HttpHeader" : "Referer=https://wecima.movie/",
+
+    //     "Referer" : "https://wecima.movie/",
+    // };
+    // var properties = JSON.stringify(json);
+    // // webapis.avplay.setStreamingProperty('USER_AGENT', properties);
+    // webapis.avplay.setStreamingProperty('COOKIE', properties);
+    // webapis.avplay.setStreamingProperty('CUSTOM_MESSAGE', properties);
+//     // Object.keys(result.params).forEach(name => {
+//     //             console.log("getActiveView: " +Object.keys(result.params[name]));
+//     //         });
+// }
 
     
  
 
-    // Set custom HTTP headers
-    // avplay.setStreamingProperty('HTTP_HEADER', JSON.stringify({
-    //     // 'Referer': 'https://yourwebsite.com',
+   
+
+
+
+
+    // function drmEventCallback(event, data) {
+    //     if(data.name == "DrmError") {
+    //         // error handling
+    //         console.log(data);
+    //     }
+    // }
+    
+    // function prepareCallback() {
+    //     webapi.avplay.play();
+    // }
+     // Set custom HTTP headers
+    //  webapis.avplay.setDrm('PLAYREADY',"SetProperties", JSON.stringify({
+    //     'Referer': 'https://wecima.movie/',
     //     'User-Agent': 'airmaxtv'
     // }));
+
+   
+    
+    // // webapis.avplay.open(url);
+    // webapis.avplay.setListener({ondrmevent:drmEventCallback});
+    // webapis.avplay.setDrm("PLAYREADY", "SetProperties", properties);
+
     // avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_FULL_SCREEN');
     // try {
     //     // Set the display mode to full screen or letter box
@@ -888,8 +957,11 @@ document.body.appendChild(objElem);
     // } catch (e) {
     //     console.error("Error setting display mode: ", e);
     // }
-    webapis.avplay.setStreamingProperty('USER_AGENT',  'airmaxtv');
-    
+   
+    // webapis.avplay.setStreamingProperty('USER_AGENT',  'android 7');
+    // webapis.avplay.setStreamingProperty("COOKIE", "Referer=https://wecima.movie/");
+
+    // webapis.avplay.setStreamingProperty('REFERRER',  'https://wecima.movie');
             // Prepare and play the video
             webapis.avplay.prepareAsync(function() {
                 // webapis.avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX')
@@ -904,4 +976,30 @@ document.body.appendChild(objElem);
 
         });
 
+        function parseUrlWithParams(input) {
+            // Check if the string contains '||'
+            if (input.includes('||')) {
+                // Split the input into URL and parameters
+                let [url, params] = input.split('||');
+                
+                // Split parameters by '&' and then key-value pairs by '='
+                let paramArray = params.split('&').map(param => {
+                    let [key, value] = param.split('=');
+                    return { [key.trim()]: value.trim() };
+                });
+        
+                return {
+                    url: url.trim(),
+                    params: paramArray
+                };
+            } else {
+                return { 
+                    url: input.trim(),
+                    params: []
+                 };
+            }
+        }
+        
+        
+        
 // updateFocus(0, 0);
