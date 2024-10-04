@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie App</title>
     <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
+
 </head>
 <body>
     <div id="mainView">
@@ -14,10 +16,8 @@
             <p id="keyView"></p>
         </div>
         <div id="categoriesContainer"></div>
-        <div id="sublistContainer"></div>
     </div>
-    
-    <div id="seasonsContainer" style="display: none;"></div>
+ 
 <div id="seriesView" style="display: none;">
     <img id="image" alt="Movie Poster">
     <h2 id="title"></h2>
@@ -50,12 +50,12 @@
     <p id="episodeDescription"></p>
     <div id="resolutionsContainer"></div> -->
     <video id="videoPlayer" controls autoplay>
-            <!-- <source src="mov_bbb.mp4" type="video/mp4">
-            <source src="mov_bbb.ogg" type="video/ogg">
-            Your browser does not support HTML video. -->
+        <!-- <source src="https://airmax.boats:443/airmaxtv1122/airmaxtv2211/306.ts"> -->
       </video>
 </div>
-    
+
+<div id="browseView" style="display: none; position: relative;">
+</div>
 
     <script src="js/script.js"></script>
 </body>

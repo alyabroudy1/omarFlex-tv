@@ -16,16 +16,26 @@
 
 let viewWorkflow = [];
 
+const fetchUrl = "http://194.164.53.40/movie/fetch/";
+const searchUrl = "http://194.164.53.40/movie/search/";
+const homepageUrl = "http://194.164.53.40/movie/homepage?tv=true";
+
 let viewList = {
-    main: document.getElementById('mainView'),
-    series: document.getElementById('seriesView'),
-    season: document.getElementById('seasonView'),
-    episode: document.getElementById('episodeView'),
-    film: document.getElementById('filmView'),
-    video: document.getElementById('videoView')
+    Main: document.getElementById('mainView'),
+    Series: document.getElementById('seriesView'),
+    Season: document.getElementById('seasonView'),
+    Episode: document.getElementById('episodeView'),
+    Film: document.getElementById('filmView'),
+    Video: document.getElementById('videoView'),
+    Browse: document.getElementById('browseView')
 };
-let currentViewName = 'main';
-viewWorkflow.push('main');
+let currentViewName = 'Main';
+// view workflow
+let defaultWorkflowItem = {};
+defaultWorkflowItem.view = 'Main';
+defaultWorkflowItem.row = 0;
+defaultWorkflowItem.col = 0;
+viewWorkflow.push(defaultWorkflowItem);
 // Array to store the selectable items
 //const items = document.querySelectorAll('.selectable');
 // let currentCategoryIndex = 0; // Track the current category index
@@ -41,85 +51,22 @@ let currentColIndex = 0;
 let backPressCount = 0;
 let backPressTimer = null;
 
-const videoPlayer = document.getElementById('videoPlayer');
-    // let lastOkPressTime = 0; // Track the last time OK was pressed
-    // const doubleClickDelay = 300; // Delay for double click detection (in ms)
-    // Request fullscreen when the video is ready to play
-    videoPlayer.addEventListener('loadedmetadata', () => {
-        // Check if fullscreen is available
-        if (videoPlayer.requestFullscreen) {
-            videoPlayer.requestFullscreen();
-        } else if (videoPlayer.webkitRequestFullscreen) { // For Safari
-            videoPlayer.webkitRequestFullscreen();
-        } else if (videoPlayer.msRequestFullscreen) { // For IE/Edge
-            videoPlayer.msRequestFullscreen();
-        }
-    });
+let avPlayer = null;
 
-
-    const exampleMovies = [
-        {
-            title: 'Popular Movies',
-            sublist: [
-                {
-                    title: 'Series 1',
-                    cardImage: "https://m.media-amazon.com/images/M/MV5BYTllODYwZjktZDEzYi00ZDZkLWFjZWMtMGVkYzc4NTczNzI0XkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg", 
-                    description: 'Description of Series 1',
-                    type: 'series', // Indicating this is a series
-                    sublist: [
-                        { 
-                            title: 'Season 1', 
-                            type: 'season',
-                            description: 'Season 1 Description', 
-                            cardImage: "https://m.media-amazon.com/images/M/MV5BYTllODYwZjktZDEzYi00ZDZkLWFjZWMtMGVkYzc4NTczNzI0XkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg", 
-                            sublist: [
-                        {
-                            title: 'episodes 1', 
-                            type: 'episode',
-                            description: 'episodes 1 Description', 
-                            cardImage: "https://m.media-amazon.com/images/M/MV5BYTllODYwZjktZDEzYi00ZDZkLWFjZWMtMGVkYzc4NTczNzI0XkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg", 
-                            sublist: [
-                              { 
-                                title: 'resolution 1',
-                                type: 'video',
-                                 description: 'resolution 1 Description',
-                                 cardImage: "https://m.media-amazon.com/images/M/MV5BYTllODYwZjktZDEzYi00ZDZkLWFjZWMtMGVkYzc4NTczNzI0XkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg", 
-                                 url: "https://www.w3schools.com/html/mov_bbb.mp4"
-                                },
-                                { 
-                                    title: 'resolution 2',
-                                    type: 'video',
-                                     description: 'resolution 1 Description',
-                                     cardImage: "https://m.media-amazon.com/images/M/MV5BYTllODYwZjktZDEzYi00ZDZkLWFjZWMtMGVkYzc4NTczNzI0XkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg", 
-                                     url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
-                                    }
-                                                                                                   ]}, 
-                        {title: 'episodes 2', type: 'episode', description: 'episodes 2 Description', sublist: [
-                            { 
-                                title: 'resolution 3',
-                                type: 'video',
-                                 description: 'resolution 2 Description',
-                                 cardImage: "https://m.media-amazon.com/images/M/MV5BYTllODYwZjktZDEzYi00ZDZkLWFjZWMtMGVkYzc4NTczNzI0XkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg", 
-                                 url: "https://www.w3schools.com/html/mov_bbb.mp4"
-                                }   
-                        ]},
-                          ] 
-                        },
-                        { title: 'Season 2', type: 'season', description: 'Season 2 Description', episodes: [] },
-                    ]
-                },
-                {
-                    title: 'Movie 1',
-                    cardImage: "https://m.media-amazon.com/images/M/MV5BYTllODYwZjktZDEzYi00ZDZkLWFjZWMtMGVkYzc4NTczNzI0XkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg", 
-                    description: 'Description of Movie 1',
-                    type: 'film',
-                    state: 'movie' // Regular movie
-                },
-                // Add more movies as needed
-            ]
-        }
-                           
-                       ];
+// const videoPlayer = document.getElementById('videoPlayer');
+//     // let lastOkPressTime = 0; // Track the last time OK was pressed
+//     // const doubleClickDelay = 300; // Delay for double click detection (in ms)
+//     // Request fullscreen when the video is ready to play
+//     videoPlayer.addEventListener('loadedmetadata', () => {
+//         // Check if fullscreen is available
+//         if (videoPlayer.requestFullscreen) {
+//             videoPlayer.requestFullscreen();
+//         } else if (videoPlayer.webkitRequestFullscreen) { // For Safari
+//             videoPlayer.webkitRequestFullscreen();
+//         } else if (videoPlayer.msRequestFullscreen) { // For IE/Edge
+//             videoPlayer.msRequestFullscreen();
+//         }
+//     });
 
 
 // Function to exit the app
@@ -134,15 +81,37 @@ function exitApp() {
 document.getElementById('searchButton').onclick = () => {
     let query = document.getElementById('searchField').value;
     console.log(query);
+    fetchData(searchUrl+ query + '?tv=true').then(data => {
+        if (data) {
+            console.log(data); // Handle the fetched data
+            // Example: Access the title of the first result
+            displayMovies(data);
+        }
+    });
 };
 
 function handleRemoteInVideo(event){
+    //Media seek during playback
+var successCallback = function() {
+    console.log('Media seek successful');
+  }
+  
+  var errorCallback = function() {
+    console.log('Media seek failed');
+  }
+  //Jump forward by 5000 ms
+  var currentTime = webapis.avplay.getCurrentTime();
+let duration =webapis.avplay.getDuration();
+//   var newTime = currentTime + 5000;
+let newTime = 0;
+console.log(webapis.avplay.getState());
+console.log(duration);
         switch (event.keyCode) {
             case 13: // Enter key
-                if (videoPlayer.paused) {
-                    videoPlayer.play();
+                if (webapis.avplay.getState() === 'PAUSED') {
+                    webapis.avplay.play();
                 } else {
-                    videoPlayer.pause();
+                    webapis.avplay.pause();
                 }
                     // const currentTime = new Date().getTime();
                     // if (currentTime - lastOkPressTime < doubleClickDelay) {
@@ -152,10 +121,24 @@ function handleRemoteInVideo(event){
                     // lastOkPressTime = currentTime;
                 break;
             case 37: // Left arrow key (rewind)
-            videoPlayer.currentTime -= 10; // Rewind 10 seconds
+                // videoPlayer.currentTime -= 10; // Rewind 10 seconds
+                if (duration > 0 && currentTime - 5000 > 0) {
+                    newTime =currentTime - 5000;
+                    console.log('bTime: '+newTime + ', ' +duration);
+                webapis.avplay.seekTo(newTime,successCallback,errorCallback);
+                }
+                
                 break;
             case 39: // Right arrow key (fast-forward)
-            videoPlayer.currentTime += 10; // Fast-forward 10 seconds
+            //Case 1 Fast-forward by 15000 ms
+            if (duration > 0 && currentTime + 5000 < duration) {
+                newTime =currentTime + 5000;
+                console.log('fTime: '+newTime + ', ' +duration);
+            webapis.avplay.seekTo(newTime,successCallback,errorCallback);
+            }
+            
+                // webapis.avplay.jumpForward(15000,successCallback,errorCallback);  
+            // videoPlayer.currentTime += 10; // Fast-forward 10 seconds
                 break;
             case 10009: // Tizen back key
             case 8:
@@ -186,7 +169,7 @@ function toggleFullScreen() {
 
 document.addEventListener('keydown', function(event) {
     console.log("key: "+event.keyCode);
-    if (currentViewName === 'video') {
+    if (getCurrentViewWorkflow().view === 'Video') {
         return handleRemoteInVideo(event);
     }
 
@@ -229,11 +212,12 @@ document.addEventListener('keydown', function(event) {
 
 // Function to update focus on the current item
 function updateFocus(rowIndex, colIndex) {
-    console.log('updateFocus: '+currentViewName);
-    if(currentViewName === 'video') {
+    let currentViewWF = getCurrentViewWorkflow();
+    console.log('updateFocus: '+currentViewWF.view);
+    if(currentViewWF.view === 'Video') {
         return;
     }
-    const rows = viewList[currentViewName].querySelectorAll('.selectableRow');
+    const rows = viewList[currentViewWF.view].querySelectorAll('.selectableRow');
     
 
     if(rowIndex >= rows.length){
@@ -252,6 +236,7 @@ function updateFocus(rowIndex, colIndex) {
 
     const cols = nextRow.querySelectorAll('.selectableCol');
 
+    // maybe do it in the navigate method before being adjusted
     if(cols != null){
         // Remove highlight from all movies
         cols.forEach(col => col.classList.remove('highlighted'));
@@ -279,6 +264,8 @@ function updateFocus(rowIndex, colIndex) {
         cols[colIndex].classList.add('highlighted');
         cols[colIndex].focus(); // Focus on the current movie
     }
+    currentViewWF.col = colIndex;
+    currentViewWF.row = rowIndex
     currentRowIndex = rowIndex;
     currentColIndex = colIndex;
 }
@@ -294,10 +281,14 @@ function updateFocus(rowIndex, colIndex) {
 // }
 
 // Function to navigate through movies and categories
+function getCurrentViewWorkflow() {
+    return viewWorkflow[viewWorkflow.length -1];
+}
 function navigateMovies(direction) {
         // let view = getActiveView();
-    const rows = viewList[currentViewName].querySelectorAll('.selectableRow');
-    let currentRow = rows[currentRowIndex];
+        let currentViewWF = getCurrentViewWorkflow();
+    const rows = viewList[currentViewWF.view].querySelectorAll('.selectableRow');
+    let currentRow = rows[currentViewWF.row];
 
 //console.log("currentCategory: "+ currentCategoryIndex +", col: "+currentMovieIndex);
 if(currentRow == null){
@@ -305,13 +296,16 @@ if(currentRow == null){
     return;
 }
     const cols = currentRow.querySelectorAll('.selectableCol');
-
+    let currentCol = cols[currentViewWF.col];
     
     //currentCategory.dataset.lastSelectedColumn = currentMovieIndex;
 
-    if(cols != null){
+    if(currentCol === null){
         // Remove highlight from all movies
         cols.forEach(col => col.classList.remove('highlighted'));
+        currentViewWF.col = 0;
+    }else {
+        currentCol.classList.remove('highlighted')
     }
     
 
@@ -322,19 +316,21 @@ if(currentRow == null){
     switch (direction){
         case 'next':
             // in selected row move column right
-            updateFocus(currentRowIndex, (currentColIndex + 1));
+            // console.log(getCurrentViewWorkflow());
+            updateFocus(currentViewWF.row, (currentViewWF.col +1));
+            // console.log(getCurrentViewWorkflow());
             break;
         case 'prev':
             // in selected row move column left
-            updateFocus(currentRowIndex, (currentColIndex - 1));
+            updateFocus(currentViewWF.row, (currentViewWF.col -1));
             break;
         case 'up':
             // move selected row up
-            updateFocus((currentRowIndex -1), 0);
+            updateFocus((currentViewWF.row -1), 0);
             break;
         case 'down':
             // move selected row up
-            updateFocus((currentRowIndex +1), 0);
+            updateFocus((currentViewWF.row +1), 0);
             break;
     }
 
@@ -400,29 +396,36 @@ function selectMovie() {
 // Continue with your existing showMovieDetails and other functions...
 
 
-function displayMovies(movies) {
+function displayMovies(categories) {
+
     const categoriesContainer = document.getElementById('categoriesContainer');
     categoriesContainer.innerHTML = ''; // Clear previous movies
 
-    // categories.forEach(movie => {
-    //     let categoryContainer = generateSearchResultView('search', movie);
-    //     // Add the category container to the main categories container
- 
-    // });
+    categories.forEach(cat => {
+        let categoryContainer = generateSearchResultView(cat);
+        categoriesContainer.appendChild(categoryContainer);
+    });
 
-    const categoryDiv = document.createElement('div');
-    categoryDiv.classList.add('category');
-    categoryDiv.classList.add('selectableRow');
-
-    let movieListView = generateMovieListView(movies);
-    categoryDiv.appendChild(movieListView);
-
-
-    categoriesContainer.appendChild(categoryDiv);
+    
     // Focus the first movie card in the first category, if any
     if (categoriesContainer.firstChild && categoriesContainer.firstChild.querySelector('.movie-card')) {
         categoriesContainer.firstChild.querySelector('.movie-card').focus();
     }
+}
+
+function generateSearchResultView(category){
+// Add the category container to the main categories container
+const categoryDiv = document.createElement('div');
+categoryDiv.classList.add('category');
+categoryDiv.classList.add('selectableRow');
+let categoryTitleView = document.createElement('h2');
+categoryTitleView.innerText = category.type;
+categoryDiv.appendChild(categoryTitleView);
+
+let movieListView = generateMovieListView(category.result);
+categoryDiv.appendChild(movieListView);
+
+return categoryDiv;
 }
 
 function generateCategoryView_old(category){
@@ -467,7 +470,7 @@ function generateCategoryView_old(category){
 function generateSublistView(view, type, movies){
     // Create a container for the category
     let categoryContainer = view.querySelector('#sublistContainer');
-    if (currentViewName !== 'main') {
+    if (currentViewName !== 'Main') {
         categoryContainer.innerHTML = '';
     }
     
@@ -517,20 +520,20 @@ function generateMovieCard(movie){
 function goBack() {
     console.log(viewWorkflow);
     let lastView = viewWorkflow.pop();
-    console.log('goback:lastView: '+ lastView);
-    console.log(viewWorkflow);
-    viewList[lastView].style.display = 'none';
+    console.log('goback:lastView: '+ lastView.view);
+    // console.log(viewWorkflow);
+    viewList[lastView.view].style.display = 'none';
     let previousView =  viewWorkflow[viewWorkflow.length -1];
-    console.log('goback:previousView: '+ previousView);
-    viewList[previousView].style.display = 'block';
-    currentViewName = previousView;
-    updateFocus(0,0);
+    console.log('goback:previousView: '+ previousView.view);
+    viewList[previousView.view].style.display = 'block';
+    currentViewName = previousView.view;
+        // updateFocus(0,0);
 }
 
 function handleBackPress() {
     // Check if user is in the main view
     console.log('handleBackPress: '+currentViewName + ', count: '+backPressCount);
-    if (currentViewName === 'main' || currentViewName === 'video') {
+    if (currentViewName === 'Main' || currentViewName === 'Video') {
         if (backPressCount === 0) {
             backPressCount += 1;
             console.log("Press back again to exit.");
@@ -539,7 +542,7 @@ function handleBackPress() {
                 backPressCount = 0;
             }, 1000);
         } else {
-            if (currentViewName === 'video') {
+            if (currentViewName === 'Video') {
                 videoPlayer.pause();
                 if (document.fullscreenElement) {
                     document.exitFullscreen(); // Exit fullscreen
@@ -560,39 +563,131 @@ function handleBackPress() {
 function showMovieDetails(movie) {
     // mainView.style.display = 'none'; // Hide main view
     // detailsView.style.display = 'block'; // Show detail view
-    let type = movie.type.toLowerCase();
-    if (type === null) {
-        console.log('unknown movie type');
-        return;
+    let type = movie.type;
+    console.log('showMovieDetails: '+ movie.state);
+    console.log(movie);
+    if (type == null) {
+        type = movie.state;
+        console.log('movie state: '+type);
     }
+    if(type == null){
+        console.log('unknown movie type');
+    return;
+    }
+    // type = type.toLowerCase();
+    console.log('movie type: '+type);
     let view = viewList[type];
     if (view === null) {
         console.log('unknown movie type: '+type);
         return;
     }
-    showView(type);
+   
 
 
-    if (type === 'video') {
-        videoPlayer.innerHTML = '';
-        // let videoElement = view.querySelector('video');
+    if (type === 'Video') {
+            videoPlayer.innerHTML = '';
+            // var videoPlayer = new tizen.VideoPlayer('videoPlayer');
+        // const videoPlayer = webapis.avplay;
+        // videoPlayer.setHTTPHeader('Referer', 'https://wecima.movie');
+// videoPlayer.open('https://www.w3schools.com/html/mov_bbb.mp4');
+// videoPlayer.play('https://www.w3schools.com/html/mov_bbb.mp4', {
+//     fullscreen: true
+// });
+// videoPlayer.play();
+
+
+
+// var objElem = document.createElement('object');
+// objElem.type = 'application/avplayer';
+// objElem.style.left = '100px';
+// objElem.style.top = '200px';
+// objElem.style.width = '600px';
+// objElem.style.height = '400px';
+// viewList['Video'].appendChild(objElem);
+// showView(type);
+// webapis.avplay.open('https://www.w3schools.com/html/mov_bbb.mp4');
+// webapis.avplay.play();
+
+        let videoElement = view.querySelector('video');
         let videoSource = document.createElement('source');
         videoSource.src = movie.url;
         videoSource.type = 'video/mp4';
+
+        // initAVPlay();
+        // const headers = new Headers({
+        //     'Authorization': 'Bearer YOUR_TOKEN',
+        //     'Referer': 'https://wecima.movie'
+        // });
+
+        // avPlayer.open(videoUrl);
+        // avPlayer.setHTTPHeader('Referer', 'https://wecima.movie');
+
+        //  // Prepare the player (setting resolution, screen size, etc.)
+        //  avPlayer.prepare();
+
+        //  // Start playing the video
+        //  avPlayer.play();
+
+        //  window.onload = function() {
+        //     playVideoWithHeaders();
+        // };
+
+        // Fetch the video with custom headers
+        // fetch(movie.url, { headers })
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not ok');
+        //         }
+        //         return response.blob();
+        //     })
+        //     .then(blob => {
+        //         // Create a Blob URL from the fetched video
+        //         const videoBlobUrl = URL.createObjectURL(blob);
+
+        //         // Set the video element source to the Blob URL
+        //             // const videoElement = document.getElementById('myVideo');
+        //         videoPlayer.src = videoBlobUrl;
+        //     })
+        //     .catch(error => {
+        //         console.error('There was a problem with the fetch operation:', error);
+        //     });
+
+
         videoPlayer.appendChild(videoSource);
-        updateFocus(0,0); 
+        // updateFocus(0,0); 
+        showView(type);
         return;
     }
+   if (!showView(type)) {
+    console.log('unknown view: '+ type);
+    return;
+   } 
+   if (type === 'Browse') {
+    console.log('view: '+ type);
+    return;
+   } 
+
 
     view.querySelector('#title').innerHTML = `<h4>${movie.title}</h4>`;
 
     view.querySelector('#image').src = movie.cardImage;
 
     view.querySelector('#description').innerText = movie.description;
+    
+    fetchData(fetchUrl + movie.id+'?tv=true').then(data => {
+        if (data) {
+            console.log(data); // Handle the fetched data
+            if (data == null || data.length === 0) {
+                return;
+            }
 
-    if (movie.sublist == null || movie.sublist.length === 0) {
-        return;
-    }
+            generateSublistView(view, type, data);
+
+            updateFocus(0,0); 
+        }
+    });
+
+    
 
     // let category = {
     //     title: type,
@@ -601,9 +696,7 @@ function showMovieDetails(movie) {
 
 
     
-    generateSublistView(view, type, movie.sublist);
-
-    updateFocus(0,0); 
+  
     // if (movie.type === 'series') {
     //     displaySeasons(movie.sublist); // Show seasons for series
     // } else if (movie.type === 'season') {
@@ -616,17 +709,26 @@ function showMovieDetails(movie) {
 
 function showView(type){
     console.log("showView: " +type);
+    let found = false;
     Object.keys(viewList).forEach(name => {
         if (type === name) {
         console.log("show: " +name);
         viewList[name].style.display = 'block';
         currentViewName = name;
-        viewWorkflow.push(name);
+
+
+        let workflowItem = {};
+        workflowItem.view = name;
+        workflowItem.row = 0;
+        workflowItem.col = 0;
+        viewWorkflow.push(workflowItem);
+        found = true;
         }else{
             console.log("hide: " +name);
             viewList[name].style.display = 'none';
         }
     });
+    return found;
 }
 
 
@@ -650,21 +752,156 @@ async function fetchData(url) {
     }
 }
 
+// function initAVPlay() {
+//     if (!avPlayer) {
+//         avPlayer = webapis.avplay;  // Get the AVPlay object
+//         avPlayer.init();  // Initialize AVPlay
+//     }
+// }
 
 // Example usage
 // const url = 'https://raw.githubusercontent.com/alyabroudy1/omerFlex-php/refs/heads/main/test-search.json'; // Replace with your actual URL
 // const url = 'https://gist.githubusercontent.com/deepakpk009/99fd994da714996b296f11c3c371d5ee/raw/28c4094ae48892efb71d5122c1fd72904088439b/media.json'
-const url = "http://194.164.53.40/movie/search/sonic";
-fetchData(url).then(data => {
-    if (data) {
-        console.log(data); // Handle the fetched data
-        // Example: Access the title of the first result
-        displayMovies(data);
-    }
-});
+// const url = "http://194.164.53.40/movie/search/sonic";
+// fetchData(homepageUrl).then(data => {
+//     if (data) {
+//         console.log(data); // Handle the fetched data
+//         // Example: Access the title of the first result
+//         displayMovies(data);
+//     }
+// });
+
+// Set event listeners
+function setAVPlayerListeners() {
+    var listener = {
+        onbufferingstart: function() {
+            console.log("Buffering start.");
+        },
+        
+        onbufferingprogress: function(percent) {
+            // console.log("Buffering progress data : " + percent);
+        },
+        
+        onbufferingcomplete: function() {
+            console.log("Buffering complete.");
+        },
+        onstreamcompleted: function() {
+            console.log("Stream Completed");
+            webapis.avplay.stop();
+        },
+        
+        oncurrentplaytime: function(currentTime) {
+            // console.log("Current playtime: " + currentTime);
+        },
+        
+        onerror: function(eventType) {
+            console.log("event type error : " + eventType);
+        },
+        
+        onevent: function(eventType, eventData) {
+            console.log("event type: " + eventType + ", data: " + eventData);
+        },
+        
+        onsubtitlechange: function(duration, text, data3, data4) {
+            console.log("subtitleText: " + text);
+        },
+        ondrmevent: function(drmEvent, drmData) {
+            console.log("DRM callback: " + drmEvent + ", data: " + drmData);
+        }
+        };
+        
+        webapis.avplay.setListener(listener);
+        
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    var objElem = document.createElement('object');
+objElem.type = 'application/avplayer';
+
+/*
+//Adjust the size and position of the media display area 
+//by changing the CSS style attribute
+objElem.style.left = 100 + 'px';
+objElem.style.top = 200 + 'px';
+objElem.style.width = 600 + 'px';
+objElem.style.height = 400 + 'px';
+*/
+
+//Append the object element to your document
+document.body.appendChild(objElem);
 
 
+// For example,  video positon is 
+// left: 100 px / top: 200 px / width: 600 px / height: 400 px
+
+// Case 1: Application resolution 1920x1080 px
+// webapis.avplay.setDisplayRect(100,200,600,400);
+
+// Case 2: Other application resolution
+
+// // Base resolution of avplay
+// var avplayBaseWidth = 1920;
+
+// // Calculate ratio to base resolution
+// var ratio = avplayBaseWidth / window.document.documentElement.clientWidth;
+
+// // Convert rectangle to base resolution
+// var newLeft = 100 * ratio;
+// var newTop = 200 * ratio;
+// var newWidth = 600 * ratio;
+// var newHeight = 400 * ratio;
+
+// webapis.avplay.setDisplayRect(newLeft,newTop,newWidth,newHeight); 
+
+// var successCallback = function() {
+//     console.log('The media has finished preparing');
+//     }
+    
+//     var errorCallback = function() {
+//     console.log('The media has failed to prepare');
+//     }
+//     webapis.avplay.prepareAsync(successCallback,errorCallback);
 
 
+    // var avplay = webapis.avplay;
 
-updateFocus(0, 0);
+    // Initialize the AVPlay object
+    // webapis.avplay.open('https://airmax.boats:443/airmaxtv1122/airmaxtv2211/306.ts');
+    webapis.avplay.open('https://video.alkawthartv.ir/original/2023/06/11/638221028428011214video.mp4');
+    
+    setAVPlayerListeners();
+
+    
+ 
+
+    // Set custom HTTP headers
+    // avplay.setStreamingProperty('HTTP_HEADER', JSON.stringify({
+    //     // 'Referer': 'https://yourwebsite.com',
+    //     'User-Agent': 'airmaxtv'
+    // }));
+    // avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_FULL_SCREEN');
+    // try {
+    //     // Set the display mode to full screen or letter box
+    //     avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');
+    //     console.log("setting display mode done ");
+    // } catch (e) {
+    //     console.error("Error setting display mode: ", e);
+    // }
+    webapis.avplay.setStreamingProperty('USER_AGENT',  'airmaxtv');
+    
+            // Prepare and play the video
+            webapis.avplay.prepareAsync(function() {
+                // webapis.avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX')
+                webapis.avplay.setDisplayRect(0, 0, 1920, 1080);
+                webapis.avplay.setStreamingProperty("ADAPTIVE_INFO", "FIXED_MAX_RESOLUTION=7680x4320");
+                webapis.avplay.play();
+                showView('Video');
+                
+            }, function(error) {
+                console.error('Error preparing AVPlay:', error);
+            });
+
+        });
+
+// updateFocus(0, 0);

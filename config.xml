@@ -6,6 +6,9 @@
     <tizen:privilege name="http://tizen.org/privilege/internet"/>
     <tizen:privilege name="http://tizen.org/privilege/network.http"/>
     <tizen:privilege name="http://tizen.org/privilege/network.protocol"/>
+    <tizen:privilege name="http://developer.samsung.com/privilege/avplay"/>
+    <tizen:privilege name="http://tizen.org/privilege/display"/>
+    <tizen:privilege name="http://tizen.org/privilege/multimedia"/>
     <access origin="*" subdomains="true"/>
     <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
     <icon src="icon.png"/>
