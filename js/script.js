@@ -532,8 +532,8 @@ function goBack() {
 
 function handleBackPress() {
     // Check if user is in the main view
-    console.log('handleBackPress: '+currentViewName + ', count: '+backPressCount);
-    if (currentViewName === 'Main' || currentViewName === 'Video') {
+    console.log('handleBackPress: '+getCurrentViewWorkflow.view + ', count: '+backPressCount);
+    if (getCurrentViewWorkflow.view === 'Main' || getCurrentViewWorkflow.view === 'Video') {
         if (backPressCount === 0) {
             backPressCount += 1;
             console.log("Press back again to exit.");
@@ -542,12 +542,15 @@ function handleBackPress() {
                 backPressCount = 0;
             }, 1000);
         } else {
-            if (currentViewName === 'Video') {
-                videoPlayer.pause();
+            if (getCurrentViewWorkflow.view === 'Video') {
+                // videoPlayer.pause();
+                webapis.avplay.stop();
                 if (document.fullscreenElement) {
                     document.exitFullscreen(); // Exit fullscreen
                 }
                 backPressCount = 0;
+                webapis.avplay.close();
+                viewList['Video'].innerHTML = '';
                 return goBack();
             }
             // Exit the app if back is pressed twice within 1 second
@@ -582,10 +585,9 @@ function showMovieDetails(movie) {
         return;
     }
    
-
-
     if (type === 'Video') {
-            videoPlayer.innerHTML = '';
+            // videoPlayer.innerHTML = '';
+            
             // var videoPlayer = new tizen.VideoPlayer('videoPlayer');
         // const videoPlayer = webapis.avplay;
         // videoPlayer.setHTTPHeader('Referer', 'https://wecima.movie');
@@ -608,10 +610,10 @@ function showMovieDetails(movie) {
 // webapis.avplay.open('https://www.w3schools.com/html/mov_bbb.mp4');
 // webapis.avplay.play();
 
-        let videoElement = view.querySelector('video');
-        let videoSource = document.createElement('source');
-        videoSource.src = movie.url;
-        videoSource.type = 'video/mp4';
+        // let videoElement = view.querySelector('video');
+        // let videoSource = document.createElement('source');
+        // videoSource.src = movie.url;
+        // videoSource.type = 'video/mp4';
 
         // initAVPlay();
         // const headers = new Headers({
@@ -651,11 +653,12 @@ function showMovieDetails(movie) {
         //     .catch(error => {
         //         console.error('There was a problem with the fetch operation:', error);
         //     });
-
-
-        videoPlayer.appendChild(videoSource);
+// 
+// 
+        // videoPlayer.appendChild(videoSource);
         // updateFocus(0,0); 
         showView(type);
+        playMovie(movie);
         return;
     }
    if (!showView(type)) {
@@ -759,17 +762,7 @@ async function fetchData(url) {
 //     }
 // }
 
-// Example usage
-// const url = 'https://raw.githubusercontent.com/alyabroudy1/omerFlex-php/refs/heads/main/test-search.json'; // Replace with your actual URL
-// const url = 'https://gist.githubusercontent.com/deepakpk009/99fd994da714996b296f11c3c371d5ee/raw/28c4094ae48892efb71d5122c1fd72904088439b/media.json'
-// const url = "http://194.164.53.40/movie/search/sonic";
-// fetchData(homepageUrl).then(data => {
-//     if (data) {
-//         console.log(data); // Handle the fetched data
-//         // Example: Access the title of the first result
-//         displayMovies(data);
-//     }
-// });
+
 
 // Set event listeners
 function setAVPlayerListeners() {
@@ -814,168 +807,6 @@ function setAVPlayerListeners() {
         
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-
-    var objElem = document.createElement('object');
-objElem.type = 'application/avplayer';
-
-/*
-//Adjust the size and position of the media display area 
-//by changing the CSS style attribute
-objElem.style.left = 100 + 'px';
-objElem.style.top = 200 + 'px';
-objElem.style.width = 600 + 'px';
-objElem.style.height = 400 + 'px';
-*/
-
-//Append the object element to your document
-document.body.appendChild(objElem);
-
-
-// For example,  video positon is 
-// left: 100 px / top: 200 px / width: 600 px / height: 400 px
-
-// Case 1: Application resolution 1920x1080 px
-// webapis.avplay.setDisplayRect(100,200,600,400);
-
-// Case 2: Other application resolution
-
-// // Base resolution of avplay
-// var avplayBaseWidth = 1920;
-
-// // Calculate ratio to base resolution
-// var ratio = avplayBaseWidth / window.document.documentElement.clientWidth;
-
-// // Convert rectangle to base resolution
-// var newLeft = 100 * ratio;
-// var newTop = 200 * ratio;
-// var newWidth = 600 * ratio;
-// var newHeight = 400 * ratio;
-
-// webapis.avplay.setDisplayRect(newLeft,newTop,newWidth,newHeight); 
-
-// var successCallback = function() {
-//     console.log('The media has finished preparing');
-//     }
-    
-//     var errorCallback = function() {
-//     console.log('The media has failed to prepare');
-//     }
-//     webapis.avplay.prepareAsync(successCallback,errorCallback);
-
-
-    // var avplay = webapis.avplay;
-
-
-// Example usage
-// const input = "https://www.google.com||user-agent=android 7&referer=google.com";
-
-// Output: 
-// {
-//   url: 'https://www.google.com',
-//   params: [{ 'user-agent': 'android 7' }, { referer: 'google.com' }]
-// }
-
-
-
-    // Initialize the AVPlay object
-    let iptvurl = 'https://airmax.boats:443/airmaxtv1122/airmaxtv2211/306.ts||user-agent=airmaxtv';
-    // let link = 'https://varcdnx10-18.erea12.shop:82/d/nvrtwaiubgeyf3tkampif3ypo4c5b4ajjcpfx2khekomyg5pfa2docvyqvxgfcmhwvuqlovp/_WeCima.Show_Al.Ameel.S01E34.720p.mp4';
-        // webapis.avplay.open();
-    
-
-    const result = parseUrlWithParams(iptvurl);
-
-console.log(result);
-
-webapis.avplay.open(result.url);
-// webapis.avplay.open(link);
-setAVPlayerListeners();
-
-
-// // 
-if (result.params.length > 0) {
-        result.params.forEach(param => {
-            for (let key in param) {
-                if (key.toLowerCase() === 'user-agent') {
-                    webapis.avplay.setStreamingProperty('USER_AGENT',  param[key]);
-                }
-                console.log(`${key} => ${param[key]}`);
-            }
-        });
-    }
-
-    // var json = {
-    //     // "HttpHeader" : "Referer=https://wecima.movie/",
-
-    //     "Referer" : "https://wecima.movie/",
-    // };
-    // var properties = JSON.stringify(json);
-    // // webapis.avplay.setStreamingProperty('USER_AGENT', properties);
-    // webapis.avplay.setStreamingProperty('COOKIE', properties);
-    // webapis.avplay.setStreamingProperty('CUSTOM_MESSAGE', properties);
-//     // Object.keys(result.params).forEach(name => {
-//     //             console.log("getActiveView: " +Object.keys(result.params[name]));
-//     //         });
-// }
-
-    
- 
-
-   
-
-
-
-
-    // function drmEventCallback(event, data) {
-    //     if(data.name == "DrmError") {
-    //         // error handling
-    //         console.log(data);
-    //     }
-    // }
-    
-    // function prepareCallback() {
-    //     webapi.avplay.play();
-    // }
-     // Set custom HTTP headers
-    //  webapis.avplay.setDrm('PLAYREADY',"SetProperties", JSON.stringify({
-    //     'Referer': 'https://wecima.movie/',
-    //     'User-Agent': 'airmaxtv'
-    // }));
-
-   
-    
-    // // webapis.avplay.open(url);
-    // webapis.avplay.setListener({ondrmevent:drmEventCallback});
-    // webapis.avplay.setDrm("PLAYREADY", "SetProperties", properties);
-
-    // avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_FULL_SCREEN');
-    // try {
-    //     // Set the display mode to full screen or letter box
-    //     avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');
-    //     console.log("setting display mode done ");
-    // } catch (e) {
-    //     console.error("Error setting display mode: ", e);
-    // }
-   
-    // webapis.avplay.setStreamingProperty('USER_AGENT',  'android 7');
-    // webapis.avplay.setStreamingProperty("COOKIE", "Referer=https://wecima.movie/");
-
-    // webapis.avplay.setStreamingProperty('REFERRER',  'https://wecima.movie');
-            // Prepare and play the video
-            webapis.avplay.prepareAsync(function() {
-                // webapis.avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX')
-                webapis.avplay.setDisplayRect(0, 0, 1920, 1080);
-                webapis.avplay.setStreamingProperty("ADAPTIVE_INFO", "FIXED_MAX_RESOLUTION=7680x4320");
-                webapis.avplay.play();
-                showView('Video');
-                
-            }, function(error) {
-                console.error('Error preparing AVPlay:', error);
-            });
-
-        });
-
         function parseUrlWithParams(input) {
             // Check if the string contains '||'
             if (input.includes('||')) {
@@ -1000,6 +831,178 @@ if (result.params.length > 0) {
             }
         }
         
+        function playMovie(movie) {
+
+            var objElem = document.createElement('object');
+        objElem.type = 'application/avplayer';
+        
+        /*
+        //Adjust the size and position of the media display area 
+        //by changing the CSS style attribute
+        objElem.style.left = 100 + 'px';
+        objElem.style.top = 200 + 'px';
+        objElem.style.width = 600 + 'px';
+        objElem.style.height = 400 + 'px';
+        */
+        
+        //Append the object element to your document
+        viewList['Video'].appendChild(objElem);
         
         
-// updateFocus(0, 0);
+        // For example,  video positon is 
+        // left: 100 px / top: 200 px / width: 600 px / height: 400 px
+        
+        // Case 1: Application resolution 1920x1080 px
+        // webapis.avplay.setDisplayRect(100,200,600,400);
+        
+        // Case 2: Other application resolution
+        
+        // // Base resolution of avplay
+        // var avplayBaseWidth = 1920;
+        
+        // // Calculate ratio to base resolution
+        // var ratio = avplayBaseWidth / window.document.documentElement.clientWidth;
+        
+        // // Convert rectangle to base resolution
+        // var newLeft = 100 * ratio;
+        // var newTop = 200 * ratio;
+        // var newWidth = 600 * ratio;
+        // var newHeight = 400 * ratio;
+        
+        // webapis.avplay.setDisplayRect(newLeft,newTop,newWidth,newHeight); 
+        
+        // var successCallback = function() {
+        //     console.log('The media has finished preparing');
+        //     }
+            
+        //     var errorCallback = function() {
+        //     console.log('The media has failed to prepare');
+        //     }
+        //     webapis.avplay.prepareAsync(successCallback,errorCallback);
+        
+        
+            // var avplay = webapis.avplay;
+        
+        
+        // Example usage
+        // const input = "https://www.google.com||user-agent=android 7&referer=google.com";
+        
+        // Output: 
+        // {
+        //   url: 'https://www.google.com',
+        //   params: [{ 'user-agent': 'android 7' }, { referer: 'google.com' }]
+        // }
+        
+        
+        
+            // Initialize the AVPlay object
+            // let iptvurl = 'https://airmax.boats:443/airmaxtv1122/airmaxtv2211/306.ts||user-agent=airmaxtv';
+            // let link = 'https://varcdnx10-18.erea12.shop:82/d/nvrtwaiubgeyf3tkampif3ypo4c5b4ajjcpfx2khekomyg5pfa2docvyqvxgfcmhwvuqlovp/_WeCima.Show_Al.Ameel.S01E34.720p.mp4';
+                // webapis.avplay.open();
+            
+        
+            const result = parseUrlWithParams(movie.url);
+        
+        // console.log(result);
+        
+        webapis.avplay.open(result.url);
+        // webapis.avplay.open(link);
+        setAVPlayerListeners();
+        
+        
+        // // 
+        if (result.params.length > 0) {
+                result.params.forEach(param => {
+                    for (let key in param) {
+                        if (key.toLowerCase() === 'user-agent') {
+                            webapis.avplay.setStreamingProperty('USER_AGENT',  param[key]);
+                        }
+                        console.log(`${key} => ${param[key]}`);
+                    }
+                });
+            }
+        
+            // var json = {
+            //     // "HttpHeader" : "Referer=https://wecima.movie/",
+        
+            //     "Referer" : "https://wecima.movie/",
+            // };
+            // var properties = JSON.stringify(json);
+            // // webapis.avplay.setStreamingProperty('USER_AGENT', properties);
+            // webapis.avplay.setStreamingProperty('COOKIE', properties);
+            // webapis.avplay.setStreamingProperty('CUSTOM_MESSAGE', properties);
+        //     // Object.keys(result.params).forEach(name => {
+        //     //             console.log("getActiveView: " +Object.keys(result.params[name]));
+        //     //         });
+        // }
+        
+            
+         
+        
+           
+        
+        
+        
+        
+            // function drmEventCallback(event, data) {
+            //     if(data.name == "DrmError") {
+            //         // error handling
+            //         console.log(data);
+            //     }
+            // }
+            
+            // function prepareCallback() {
+            //     webapi.avplay.play();
+            // }
+             // Set custom HTTP headers
+            //  webapis.avplay.setDrm('PLAYREADY',"SetProperties", JSON.stringify({
+            //     'Referer': 'https://wecima.movie/',
+            //     'User-Agent': 'airmaxtv'
+            // }));
+        
+           
+            
+            // // webapis.avplay.open(url);
+            // webapis.avplay.setListener({ondrmevent:drmEventCallback});
+            // webapis.avplay.setDrm("PLAYREADY", "SetProperties", properties);
+        
+            // avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_FULL_SCREEN');
+            // try {
+            //     // Set the display mode to full screen or letter box
+            //     avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');
+            //     console.log("setting display mode done ");
+            // } catch (e) {
+            //     console.error("Error setting display mode: ", e);
+            // }
+           
+            // webapis.avplay.setStreamingProperty('USER_AGENT',  'android 7');
+            // webapis.avplay.setStreamingProperty("COOKIE", "Referer=https://wecima.movie/");
+        
+            // webapis.avplay.setStreamingProperty('REFERRER',  'https://wecima.movie');
+                    // Prepare and play the video
+                    webapis.avplay.prepareAsync(function() {
+                        // webapis.avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX')
+                        webapis.avplay.setDisplayRect(0, 0, 1920, 1080);
+                        webapis.avplay.setStreamingProperty("ADAPTIVE_INFO", "FIXED_MAX_RESOLUTION=7680x4320");
+                        webapis.avplay.play();
+                        showView('Video');
+                        
+                    }, function(error) {
+                        console.error('Error preparing AVPlay:', error);
+                    });
+        
+                }
+        
+        
+        // Example usage
+// const url = 'https://raw.githubusercontent.com/alyabroudy1/omerFlex-php/refs/heads/main/test-search.json'; // Replace with your actual URL
+// const url = 'https://gist.githubusercontent.com/deepakpk009/99fd994da714996b296f11c3c371d5ee/raw/28c4094ae48892efb71d5122c1fd72904088439b/media.json'
+// const url = "http://194.164.53.40/movie/search/sonic";
+fetchData(homepageUrl).then(data => {
+    if (data) {
+        console.log(data); // Handle the fetched data
+        // Example: Access the title of the first result
+        displayMovies(data);
+    }
+});
+updateFocus(0, 0);
