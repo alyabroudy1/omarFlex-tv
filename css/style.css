@@ -47,7 +47,7 @@ object {
     border: 2px solid transparent;
     transition: border-color 0.3s;
     border-color: rgb(243, 13, 13);
-    border-width: 4px; /* Change the value to make it thicker */
+    border-width: 8px; /* Change the value to make it thicker */
     border-style: solid; /* Make sure border style is solid */
 }
 
@@ -92,17 +92,23 @@ object {
 }
 
 .movie-card {
-    width: 150px;
+    width: 210px; /* 150px + 40% = 210px */
+    min-width: 210px;
+    height: 250px; /* Fixed height for uniformity */
     margin-right: 10px;
     text-align: center;
     background-color: #222;
     padding: 10px;
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .movie-card img {
     width: 100%;
-    height: auto;
+    height: 180px;
+    object-fit: cover;
     border-radius: 8px;
 }
 
@@ -111,3 +117,5 @@ object {
     margin-top: 8px;
     color: #fff;
 }
+
+
