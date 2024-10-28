@@ -169,13 +169,13 @@ function toggleFullScreen() {
 }
 
 document.addEventListener('keydown', function (event) {
-    console.log("key: " + event.keyCode + ', v: '+getCurrentViewWorkflow().view);
+    // console.log("key: " + event.keyCode + ', v: ' + getCurrentViewWorkflow().view);
     if (getCurrentViewWorkflow().view === 'Video') {
         return handleRemoteInVideo(event);
     }
 
-    let keyView = document.getElementById('keyView');
-    keyView.innerHTML = "key: " + event.keyCode;
+    // let keyView = document.getElementById('keyView');
+    // keyView.innerHTML = "key: " + event.keyCode;
     switch (event.keyCode) {
         //case 'ArrowLeft':
         //case 'a':
@@ -448,13 +448,22 @@ function generateCategoryView_old(category) {
     // category.sublist.forEach(movie => {
     category.forEach(movie => {
         const movieCard = document.createElement('div');
-        movieCard.classList.add('movie-card'); // Add class for identification
-        movieCard.classList.add('selectableCol');
-        movieCard.innerHTML = `<h3>${movie.title}</h3><img src="${movie.cardImage}" alt="${movie.title}">`;
+        movieCard.classList.add('movie-card', 'selectableCol'); // Add classes for styling and selection
         movieCard.tabIndex = 0; // Make the movie card focusable
         movieCard.dataset.movieId = movieCounter++;
-        movieCard.onclick = () => showMovieDetails(movie); // Show details on click
+
+// Set inner HTML with an img element and a h4 tag for the title
+        movieCard.innerHTML = `
+    <img src="${movie.cardImage}" alt="${movie.title}">
+    <h4>${movie.title}</h4>
+`;
+
+// Add click event to show movie details
+        movieCard.onclick = () => showMovieDetails(movie);
+
+// Append to the movie list
         movieList.appendChild(movieCard);
+
         // Optionally, set a data attribute for the movie ID
         //movieCard.setAttribute('data-id', movie.id);
     });
@@ -569,7 +578,7 @@ function showMovieDetails(movie) {
     // mainView.style.display = 'none'; // Hide main view
     // detailsView.style.display = 'block'; // Show detail view
     let type = movie.type;
-    if (type == 'Iptv_channel'){
+    if (type == 'Iptv_channel') {
         type = 'Video';
     }
     // console.log('showMovieDetails: ' + movie.state);

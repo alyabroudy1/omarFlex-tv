@@ -42,14 +42,14 @@ object {
 /* Basic styling for selectable items */
 .highlighted {
     background-color: rgb(180, 12, 12);
-
     font-size: 20px;
-    border: 2px solid transparent;
-    transition: border-color 0.3s;
-    border-color: rgb(243, 13, 13);
-    border-width: 8px; /* Change the value to make it thicker */
-    border-style: solid; /* Make sure border style is solid */
+    border: 10px solid rgb(243, 13, 13); /* Thicker red border */
+    border-radius: 12px;
+    transform: scale(1.1); /* Increase size by 10% */
+    box-shadow: 0 0 15px rgba(243, 13, 13, 0.7); /* Stronger red glow */
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
+
 
 /* Style for focused items */
 .focused {
@@ -84,25 +84,26 @@ object {
     margin-left: 20px;
     font-size: 24px;
 }
-
 .movie-list {
     display: flex;
     overflow-x: auto;
     padding: 10px;
+    gap: 10px;
 }
 
 .movie-card {
-    width: 210px; /* 150px + 40% = 210px */
+    width: 210px;
     min-width: 210px;
-    height: 250px; /* Fixed height for uniformity */
-    margin-right: 10px;
-    text-align: center;
+    height: 250px;
     background-color: #222;
     padding: 10px;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: space-between;
+    text-align: center;
+    color: #fff;
 }
 
 .movie-card img {
@@ -114,8 +115,7 @@ object {
 
 .movie-card h4 {
     font-size: 16px;
-    margin-top: 8px;
-    color: #fff;
+    margin: 8px 0 0;
 }
 
 
