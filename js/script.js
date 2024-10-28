@@ -22,6 +22,7 @@ const homepageUrl = "http://194.164.53.40/movie/homepage?tv=true";
 
 let viewList = {
     Main: document.getElementById('mainView'),
+    Search: document.getElementById('searchResultView'),
     Series: document.getElementById('seriesView'),
     Season: document.getElementById('seasonView'),
     Episode: document.getElementById('episodeView'),
@@ -82,11 +83,14 @@ function exitApp() {
 document.getElementById('searchButton').onclick = () => {
     let query = document.getElementById('searchField').value;
     console.log(query);
-    fetchData(searchUrl + query + '?tv=true').then(data => {
+    fetchData(searchUrl + query).then(data => {
         if (data) {
+            let categoriesContainer = viewList['Search'].querySelector('#categoriesContainer');
+            showView('Search');
             console.log(data); // Handle the fetched data
             // Example: Access the title of the first result
-            displayMovies(data);
+            displayMovies(data, categoriesContainer);
+            updateFocus(0, 0);
         }
     });
 };
@@ -394,11 +398,13 @@ function selectMovie() {
 // Continue with your existing showMovieDetails and other functions...
 
 
-function displayMovies(categories) {
+function displayMovies(categories, categoriesContainer) {
 
-    const categoriesContainer = document.getElementById('categoriesContainer');
     categoriesContainer.innerHTML = ''; // Clear previous movies
-
+    if (!Array.isArray(categories)) {
+        categories = [categories];
+        console.log('not array size: '+ categories.size);
+    }
     categories.forEach(cat => {
         let categoryContainer = generateSearchResultView(cat);
         categoriesContainer.appendChild(categoryContainer);
@@ -1005,11 +1011,15 @@ function playMovie(movie) {
 // const url = 'https://raw.githubusercontent.com/alyabroudy1/omerFlex-php/refs/heads/main/test-search.json'; // Replace with your actual URL
 // const url = 'https://gist.githubusercontent.com/deepakpk009/99fd994da714996b296f11c3c371d5ee/raw/28c4094ae48892efb71d5122c1fd72904088439b/media.json'
 // const url = "http://194.164.53.40/movie/search/sonic";
+
 fetchData(homepageUrl).then(data => {
     if (data) {
+    let categoriesContainer = viewList['Main'].querySelector('#categoriesContainer');
+
         // console.log(data); // Handle the fetched data
         // // Example: Access the title of the first result
-        displayMovies(data);
+        displayMovies(data, categoriesContainer);
     }
 });
+
 updateFocus(0, 0);
