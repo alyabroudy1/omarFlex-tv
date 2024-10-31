@@ -853,7 +853,36 @@ function parseUrlWithParams(input) {
         };
     }
 }
+function playVideoNow(result) {
+    console.log("playVideoNow: ");
+    console.log(result.url);
+    webapis.avplay.open(result.url);
+    // webapis.avplay.open(link);
+    setAVPlayerListeners();
 
+
+    // //
+    if (result.params.length > 0) {
+        result.params.forEach(param => {
+            for (let key in param) {
+                if (key.toLowerCase() === 'user-agent') {
+                    webapis.avplay.setStreamingProperty('USER_AGENT', param[key]);
+                }
+                console.log(`${key} => ${param[key]}`);
+            }
+        });
+    }
+
+    webapis.avplay.prepareAsync(function () {
+        // webapis.avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX')
+        webapis.avplay.setDisplayRect(0, 0, 1920, 1080);
+        webapis.avplay.setStreamingProperty("ADAPTIVE_INFO", "FIXED_MAX_RESOLUTION=7680x4320");
+        webapis.avplay.play();
+
+    }, function (error) {
+        console.error('Error preparing AVPlay:', error);
+    });
+}
 function playMovie(movie) {
 
     var objElem = document.createElement('object');
@@ -923,26 +952,30 @@ function playMovie(movie) {
     // webapis.avplay.open();
 
 
-    const result = parseUrlWithParams(movie.url);
+
+    
+    if(movie.type == 'Iptv_channel') {
+
+    	let uri = getFinalVideoUrl(movie.url).then((result) => {
+    		console.log('redirected url2: '+result.url);
+            console.log(result);
+            // result.url = resolvedUrl;
+            if (result.params.length === 0) {
+                result.params = {
+                    'User-Agent': 'airmaxtv'
+                };
+            }
+
+            return playVideoNow(result);
+        });
+    }
+
+
+    let result = parseUrlWithParams(movie.url);
+    playVideoNow(result);
 
     // console.log(result);
 
-    webapis.avplay.open(result.url);
-    // webapis.avplay.open(link);
-    setAVPlayerListeners();
-
-
-    // //
-    if (result.params.length > 0) {
-        result.params.forEach(param => {
-            for (let key in param) {
-                if (key.toLowerCase() === 'user-agent') {
-                    webapis.avplay.setStreamingProperty('USER_AGENT', param[key]);
-                }
-                console.log(`${key} => ${param[key]}`);
-            }
-        });
-    }
 
     // var json = {
     //     // "HttpHeader" : "Referer=https://wecima.movie/",
@@ -994,17 +1027,39 @@ function playMovie(movie) {
 
     // webapis.avplay.setStreamingProperty('REFERRER',  'https://wecima.movie');
     // Prepare and play the video
-    webapis.avplay.prepareAsync(function () {
-        // webapis.avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX')
-        webapis.avplay.setDisplayRect(0, 0, 1920, 1080);
-        webapis.avplay.setStreamingProperty("ADAPTIVE_INFO", "FIXED_MAX_RESOLUTION=7680x4320");
-        webapis.avplay.play();
 
-    }, function (error) {
-        console.error('Error preparing AVPlay:', error);
-    });
 
 }
+
+async function getFinalVideoUrl(videoUrl) {
+   return await getRedirectedUrl(videoUrl);
+}
+
+async function getRedirectedUrl(movieUrl) {
+    try {
+    	const response = await fetch(movieUrl, {
+            method: 'GET',
+            redirect: 'follow',
+            mode: 'cors',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Linux; Tizen 3.0) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/5.0 Chrome/47.0.2526.69 Mobile Safari/537.36'
+            }
+        });
+    	 if (response.redirected) {
+             console.log('Redirected URL: ', response.redirect)
+             console.log(response.url.replace(/%7C/g, '|'));
+
+             return parseUrlWithParams(response.url.replace(/%7C/g, '|')); // Final resolved URL after redirection
+         } else {
+             console.log("Not redirected, original URL:", movieUrl);
+         }
+    } catch (error) {
+        console.error("Error opening video with redirection:", error);
+        return movieUrl;
+    }
+}
+
+
 
 
 // Example usage
@@ -1012,14 +1067,16 @@ function playMovie(movie) {
 // const url = 'https://gist.githubusercontent.com/deepakpk009/99fd994da714996b296f11c3c371d5ee/raw/28c4094ae48892efb71d5122c1fd72904088439b/media.json'
 // const url = "http://194.164.53.40/movie/search/sonic";
 
-fetchData(homepageUrl).then(data => {
-    if (data) {
-    let categoriesContainer = viewList['Main'].querySelector('#categoriesContainer');
+// fetchData(homepageUrl).then(data => {
+//     if (data) {
+//     let categoriesContainer = viewList['Main'].querySelector('#categoriesContainer');
+//
+//         // console.log(data); // Handle the fetched data
+//         // // Example: Access the title of the first result
+//         displayMovies(data, categoriesContainer);
+//     }
+// });
 
-        // console.log(data); // Handle the fetched data
-        // // Example: Access the title of the first result
-        displayMovies(data, categoriesContainer);
-    }
-});
-
+let urr = getFinalVideoUrl(fetchUrl + '476.ts');
+console.log(urr);
 updateFocus(0, 0);
