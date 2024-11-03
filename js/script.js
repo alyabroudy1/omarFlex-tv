@@ -954,21 +954,21 @@ function playMovie(movie) {
 
 
     
-    if(movie.type == 'Iptv_channel') {
-
-    	let uri = getFinalVideoUrl(movie.url).then((result) => {
-    		console.log('redirected url2: '+result.url);
-            console.log(result);
-            // result.url = resolvedUrl;
-            if (result.params.length === 0) {
-                result.params = {
-                    'User-Agent': 'airmaxtv'
-                };
-            }
-
-            return playVideoNow(result);
-        });
-    }
+    // if(movie.type == 'Iptv_channel') {
+    //
+    // 	let uri = getFinalVideoUrl(movie.url).then((result) => {
+    // 		console.log('redirected url2: '+result.url);
+    //         console.log(result);
+    //         // result.url = resolvedUrl;
+    //         if (result.params.length === 0) {
+    //             result.params = {
+    //                 'User-Agent': 'airmaxtv'
+    //             };
+    //         }
+    //
+    //         return playVideoNow(result);
+    //     });
+    // }
 
 
     let result = parseUrlWithParams(movie.url);
@@ -1067,16 +1067,16 @@ async function getRedirectedUrl(movieUrl) {
 // const url = 'https://gist.githubusercontent.com/deepakpk009/99fd994da714996b296f11c3c371d5ee/raw/28c4094ae48892efb71d5122c1fd72904088439b/media.json'
 // const url = "http://194.164.53.40/movie/search/sonic";
 
-// fetchData(homepageUrl).then(data => {
-//     if (data) {
-//     let categoriesContainer = viewList['Main'].querySelector('#categoriesContainer');
-//
-//         // console.log(data); // Handle the fetched data
-//         // // Example: Access the title of the first result
-//         displayMovies(data, categoriesContainer);
-//     }
-// });
+fetchData(homepageUrl).then(data => {
+    if (data) {
+    let categoriesContainer = viewList['Main'].querySelector('#categoriesContainer');
 
-let urr = getFinalVideoUrl(fetchUrl + '476.ts');
-console.log(urr);
+        // console.log(data); // Handle the fetched data
+        // // Example: Access the title of the first result
+        displayMovies(data, categoriesContainer);
+    }
+});
+
+// let urr = getFinalVideoUrl(fetchUrl + '476.ts');
+// console.log(urr);
 updateFocus(0, 0);
