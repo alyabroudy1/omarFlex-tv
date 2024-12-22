@@ -1,61 +1,61 @@
-// const categoriesContainer = document.getElementById('categoriesContainer');
-// const mainView = document.getElementById('mainView');
-// const detailView = document.getElementById('detailView');
-
-// const detailsView = document.getElementById('detailsView');
-
-// const seasonView = document.getElementById('seasonView');
-// const itemView = document.getElementById('itemView');
-
-// const videoView = document.getElementById('videoView');
-// const sublistContainers = {
-//     season: detailsView.querySelector('#seasonsSublistContainer'),
-//     item: detailsView.querySelector('#itemsSublistContainer'),
-//     resolution: detailsView.querySelector('#resolutionsSublistContainer'),
-// };
-
-let viewWorkflow = [];
+// // const categoriesContainer = document.getElementById('categoriesContainer');
+// // const mainView = document.getElementById('mainView');
+// // const detailView = document.getElementById('detailView');
+//
+// // const detailsView = document.getElementById('detailsView');
+//
+// // const seasonView = document.getElementById('seasonView');
+// // const itemView = document.getElementById('itemView');
+//
+// // const videoView = document.getElementById('videoView');
+// // const sublistContainers = {
+// //     season: detailsView.querySelector('#seasonsSublistContainer'),
+// //     item: detailsView.querySelector('#itemsSublistContainer'),
+// //     resolution: detailsView.querySelector('#resolutionsSublistContainer'),
+// // };
+//
+var viewWorkflow = [];
 
 const fetchUrl = "http://194.164.53.40/movie/fetch/";
 const searchUrl = "http://194.164.53.40/movie/search/";
 const homepageUrl = "http://194.164.53.40/movie/homepage?tv=true";
 
-let viewList = {
+var viewList = {
     Main: document.getElementById('mainView'),
-    Search: document.getElementById('searchResultView'),
-    Series: document.getElementById('seriesView'),
-    Season: document.getElementById('seasonView'),
-    Episode: document.getElementById('episodeView'),
-    Film: document.getElementById('filmView'),
-    Video: document.getElementById('videoView'),
-    Browse: document.getElementById('browseView')
+//     Search: document.getElementById('searchResultView'),
+//     Series: document.getElementById('seriesView'),
+//     Season: document.getElementById('seasonView'),
+//     Episode: document.getElementById('episodeView'),
+//     Film: document.getElementById('filmView'),
+//     Video: document.getElementById('videoView'),
+//     Browse: document.getElementById('browseView')
 };
-let currentViewName = 'Main';
+var currentViewName = 'Main';
 // view workflow
-let defaultWorkflowItem = {};
+var defaultWorkflowItem = {};
 defaultWorkflowItem.view = 'Main';
 defaultWorkflowItem.row = 0;
 defaultWorkflowItem.col = 0;
 viewWorkflow.push(defaultWorkflowItem);
 // Array to store the selectable items
 //const items = document.querySelectorAll('.selectable');
-// let currentCategoryIndex = 0; // Track the current category index
-// let currentMovieIndex = 0; // Track the current movie index
+var currentCategoryIndex = 0; // Track the current category index
+var currentMovieIndex = 0; // Track the current movie index
 
-// let categoryCounter = 0;
-let currentRowIndex = 0;
-let currentColIndex = 0;
+// // var categoryCounter = 0;
+var currentRowIndex = 0;
+var currentColIndex = 0;
 
 // Function to update focus on the current item
 
 
-let backPressCount = 0;
-let backPressTimer = null;
+var backPressCount = 0;
+var backPressTimer = null;
 
-let avPlayer = null;
+var avPlayer = null;
 
 // const videoPlayer = document.getElementById('videoPlayer');
-//     // let lastOkPressTime = 0; // Track the last time OK was pressed
+//     // var lastOkPressTime = 0; // Track the last time OK was pressed
 //     // const doubleClickDelay = 300; // Delay for double click detection (in ms)
 //     // Request fullscreen when the video is ready to play
 //     videoPlayer.addEventListener('loadedmetadata', () => {
@@ -81,18 +81,18 @@ function exitApp() {
 
 
 document.getElementById('searchButton').onclick = () => {
-    let query = document.getElementById('searchField').value;
+    var query = document.getElementById('searchField').value;
     console.log(query);
-    fetchData(searchUrl + query).then(data => {
-        if (data) {
-            let categoriesContainer = viewList['Search'].querySelector('#categoriesContainer');
-            showView('Search');
-            console.log(data); // Handle the fetched data
-            // Example: Access the title of the first result
-            displayMovies(data, categoriesContainer);
-            updateFocus(0, 0);
-        }
-    });
+    // fetchData(searchUrl + query).then(data => {
+    //     if (data) {
+    //         var categoriesContainer = viewList['Search'].querySelector('#categoriesContainer');
+    //         showView('Search');
+    //         console.log(data); // Handle the fetched data
+    //         // Example: Access the title of the first result
+    //         displayMovies(data, categoriesContainer);
+    //         updateFocus(0, 0);
+    //     }
+    // });
 };
 
 function handleRemoteInVideo(event) {
@@ -106,9 +106,9 @@ function handleRemoteInVideo(event) {
     }
     //Jump forward by 5000 ms
     var currentTime = webapis.avplay.getCurrentTime();
-    let duration = webapis.avplay.getDuration();
+    var duration = webapis.avplay.getDuration();
 //   var newTime = currentTime + 5000;
-    let newTime = 0;
+    var newTime = 0;
     console.log(webapis.avplay.getState());
     console.log(duration);
     switch (event.keyCode) {
@@ -178,7 +178,7 @@ document.addEventListener('keydown', function (event) {
         return handleRemoteInVideo(event);
     }
 
-    // let keyView = document.getElementById('keyView');
+    // var keyView = document.getElementById('keyView');
     // keyView.innerHTML = "key: " + event.keyCode;
     switch (event.keyCode) {
         //case 'ArrowLeft':
@@ -216,60 +216,60 @@ document.addEventListener('keydown', function (event) {
 
 
 // Function to update focus on the current item
-function updateFocus(rowIndex, colIndex) {
-    let currentViewWF = getCurrentViewWorkflow();
-    console.log('updateFocus: ' + currentViewWF.view);
-    if (currentViewWF.view === 'Video') {
-        return;
-    }
-    const rows = viewList[currentViewWF.view].querySelectorAll('.selectableRow');
-
-
-    if (rowIndex >= rows.length) {
-        rowIndex = rows.length - 1;
-    } else if (rowIndex < 0) {
-        rowIndex = 0;
-    }
-
-    console.log("nextCat: " + rowIndex + ", catSize: " + rows.length)
-    let nextRow = rows[rowIndex];
-
-    if (nextRow == null) {
-        console.log("nextRow is unknown: " + rowIndex);
-        return;
-    }
-
-    const cols = nextRow.querySelectorAll('.selectableCol');
-
-    // maybe do it in the navigate method before being adjusted
-    if (cols != null) {
-        // Remove highlight from all movies
-        cols.forEach(col => col.classList.remove('highlighted'));
-    }
-
-    console.log("nextCol: " + colIndex + ", colsSize: " + cols.length);
-    /*  let lastSelectedColumn = nextCategory.dataset.lastSelectedColumn;
-      if(movieIndex == 0){
-          movieIndex = lastSelectedColumn;
-      }
-  */
-    if (colIndex >= cols.length) {
-        colIndex = cols.length - 1;
-    } else if (colIndex < 0) {
-        colIndex = 0;
-    }
-
-
-    // Highlight the selected movie card
-    if (cols.length > 0) {
-        cols[colIndex].classList.add('highlighted');
-        cols[colIndex].focus(); // Focus on the current movie
-    }
-    currentViewWF.col = colIndex;
-    currentViewWF.row = rowIndex
-    currentRowIndex = rowIndex;
-    currentColIndex = colIndex;
-}
+// function updateFocus(rowIndex, colIndex) {
+//     var currentViewWF = getCurrentViewWorkflow();
+//     console.log('updateFocus: ' + currentViewWF.view);
+//     if (currentViewWF.view === 'Video') {
+//         return;
+//     }
+//     const rows = viewList[currentViewWF.view].querySelectorAll('.selectableRow');
+//
+//
+//     if (rowIndex >= rows.length) {
+//         rowIndex = rows.length - 1;
+//     } else if (rowIndex < 0) {
+//         rowIndex = 0;
+//     }
+//
+//     console.log("nextCat: " + rowIndex + ", catSize: " + rows.length)
+//     var nextRow = rows[rowIndex];
+//
+//     if (nextRow == null) {
+//         console.log("nextRow is unknown: " + rowIndex);
+//         return;
+//     }
+//
+//     const cols = nextRow.querySelectorAll('.selectableCol');
+//
+//     // maybe do it in the navigate method before being adjusted
+//     if (cols != null) {
+//         // Remove highlight from all movies
+//         cols.forEach(col => col.classList.remove('highlighted'));
+//     }
+//
+//     console.log("nextCol: " + colIndex + ", colsSize: " + cols.length);
+//     /*  var lastSelectedColumn = nextCategory.dataset.lastSelectedColumn;
+//       if(movieIndex == 0){
+//           movieIndex = lastSelectedColumn;
+//       }
+//   */
+//     if (colIndex >= cols.length) {
+//         colIndex = cols.length - 1;
+//     } else if (colIndex < 0) {
+//         colIndex = 0;
+//     }
+//
+//
+//     // Highlight the selected movie card
+//     if (cols.length > 0) {
+//         cols[colIndex].classList.add('highlighted');
+//         cols[colIndex].focus(); // Focus on the current movie
+//     }
+//     currentViewWF.col = colIndex;
+//     currentViewWF.row = rowIndex
+//     currentRowIndex = rowIndex;
+//     currentColIndex = colIndex;
+// }
 
 // function getActiveView() {
 //     Object.keys(viewList).forEach(name => {
@@ -282,151 +282,151 @@ function updateFocus(rowIndex, colIndex) {
 // }
 
 // Function to navigate through movies and categories
-function getCurrentViewWorkflow() {
-    return viewWorkflow[viewWorkflow.length - 1];
-}
+// function getCurrentViewWorkflow() {
+//     return viewWorkflow[viewWorkflow.length - 1];
+// }
 
-function navigateMovies(direction) {
-    // let view = getActiveView();
-    let currentViewWF = getCurrentViewWorkflow();
-    const rows = viewList[currentViewWF.view].querySelectorAll('.selectableRow');
-    let currentRow = rows[currentViewWF.row];
-
-//console.log("currentCategory: "+ currentCategoryIndex +", col: "+currentMovieIndex);
-    if (currentRow == null) {
-        console.log("currentRow is unknown");
-        return;
-    }
-    const cols = currentRow.querySelectorAll('.selectableCol');
-    let currentCol = cols[currentViewWF.col];
-
-    //currentCategory.dataset.lastSelectedColumn = currentMovieIndex;
-
-    if (currentCol === null) {
-        // Remove highlight from all movies
-        cols.forEach(col => col.classList.remove('highlighted'));
-        currentViewWF.col = 0;
-    } else {
-        currentCol.classList.remove('highlighted')
-    }
-
-
-    // Remove highlight from all categories
-    // categories.forEach(category => category.classList.remove('highlighted'));
-
-
-    switch (direction) {
-        case 'next':
-            // in selected row move column right
-            // console.log(getCurrentViewWorkflow());
-            updateFocus(currentViewWF.row, (currentViewWF.col + 1));
-            // console.log(getCurrentViewWorkflow());
-            break;
-        case 'prev':
-            // in selected row move column left
-            updateFocus(currentViewWF.row, (currentViewWF.col - 1));
-            break;
-        case 'up':
-            // move selected row up
-            updateFocus((currentViewWF.row - 1), 0);
-            break;
-        case 'down':
-            // move selected row up
-            updateFocus((currentViewWF.row + 1), 0);
-            break;
-    }
-
-    /*
-    switch (direction){
-        case 'next':
-            // in selected row move column right
-            updateFocus(currentCategoryIndex, (currentMovieIndex + 1));
-            break;
-        case 'prev':
-            // in selected row move column left
-            updateFocus(currentCategoryIndex, (currentMovieIndex - 1));
-            break;
-        case 'up':
-            // move selected row up
-            updateFocus((currentCategoryIndex -1), 0);
-            break;
-        case 'down':
-            // move selected row up
-            updateFocus((currentCategoryIndex +1), 0);
-            break;
-    }
-    */
-
-    /*
-    if (direction === 'next') {
-        const movies = categories[currentCategoryIndex].querySelectorAll('.movie-card');
-        currentMovieIndex = (currentMovieIndex + 1) % movies.length; // Loop back to first movie
-    } else if (direction === 'prev') {
-        const movies = categories[currentCategoryIndex].querySelectorAll('.movie-card');
-        currentMovieIndex = (currentMovieIndex - 1 + movies.length) % movies.length; // Loop back to last movie
-    } else if (direction === 'up') {
-        currentCategoryIndex = (currentCategoryIndex - 1 + categories.length) % categories.length; // Loop back to last category
-        currentMovieIndex = 0; // Reset to the first movie in the new category
-    } else if (direction === 'down') {
-        currentCategoryIndex = (currentCategoryIndex + 1) % categories.length; // Loop back to first category
-        currentMovieIndex = 0; // Reset to the first movie in the new category
-    }
-*/
-    // updateFocus(currentCategoryIndex, currentMovieIndex); // Update the highlighted movie
-}
+// function navigateMovies(direction) {
+//     // var view = getActiveView();
+//     var currentViewWF = getCurrentViewWorkflow();
+//     const rows = viewList[currentViewWF.view].querySelectorAll('.selectableRow');
+//     var currentRow = rows[currentViewWF.row];
+//
+// //console.log("currentCategory: "+ currentCategoryIndex +", col: "+currentMovieIndex);
+//     if (currentRow == null) {
+//         console.log("currentRow is unknown");
+//         return;
+//     }
+//     const cols = currentRow.querySelectorAll('.selectableCol');
+//     var currentCol = cols[currentViewWF.col];
+//
+//     //currentCategory.dataset.lastSelectedColumn = currentMovieIndex;
+//
+//     if (currentCol === null) {
+//         // Remove highlight from all movies
+//         cols.forEach(col => col.classList.remove('highlighted'));
+//         currentViewWF.col = 0;
+//     } else {
+//         currentCol.classList.remove('highlighted')
+//     }
+//
+//
+//     // Remove highlight from all categories
+//     // categories.forEach(category => category.classList.remove('highlighted'));
+//
+//
+//     switch (direction) {
+//         case 'next':
+//             // in selected row move column right
+//             // console.log(getCurrentViewWorkflow());
+//             updateFocus(currentViewWF.row, (currentViewWF.col + 1));
+//             // console.log(getCurrentViewWorkflow());
+//             break;
+//         case 'prev':
+//             // in selected row move column left
+//             updateFocus(currentViewWF.row, (currentViewWF.col - 1));
+//             break;
+//         case 'up':
+//             // move selected row up
+//             updateFocus((currentViewWF.row - 1), 0);
+//             break;
+//         case 'down':
+//             // move selected row up
+//             updateFocus((currentViewWF.row + 1), 0);
+//             break;
+//     }
+//
+//     /*
+//     switch (direction){
+//         case 'next':
+//             // in selected row move column right
+//             updateFocus(currentCategoryIndex, (currentMovieIndex + 1));
+//             break;
+//         case 'prev':
+//             // in selected row move column left
+//             updateFocus(currentCategoryIndex, (currentMovieIndex - 1));
+//             break;
+//         case 'up':
+//             // move selected row up
+//             updateFocus((currentCategoryIndex -1), 0);
+//             break;
+//         case 'down':
+//             // move selected row up
+//             updateFocus((currentCategoryIndex +1), 0);
+//             break;
+//     }
+//     */
+//
+//     /*
+//     if (direction === 'next') {
+//         const movies = categories[currentCategoryIndex].querySelectorAll('.movie-card');
+//         currentMovieIndex = (currentMovieIndex + 1) % movies.length; // Loop back to first movie
+//     } else if (direction === 'prev') {
+//         const movies = categories[currentCategoryIndex].querySelectorAll('.movie-card');
+//         currentMovieIndex = (currentMovieIndex - 1 + movies.length) % movies.length; // Loop back to last movie
+//     } else if (direction === 'up') {
+//         currentCategoryIndex = (currentCategoryIndex - 1 + categories.length) % categories.length; // Loop back to last category
+//         currentMovieIndex = 0; // Reset to the first movie in the new category
+//     } else if (direction === 'down') {
+//         currentCategoryIndex = (currentCategoryIndex + 1) % categories.length; // Loop back to first category
+//         currentMovieIndex = 0; // Reset to the first movie in the new category
+//     }
+// */
+//     // updateFocus(currentCategoryIndex, currentMovieIndex); // Update the highlighted movie
+// }
 
 // Function to select the current movie
-function selectMovie() {
-    const rows = viewList[currentViewName].querySelectorAll('.selectableRow');
-    const currentRow = rows[currentRowIndex];
-    const cols = currentRow.querySelectorAll('.selectableCol');
-
-    // Get the currently selected movie
-    const selectedCol = cols[currentColIndex];
-    // const movieId = selectedCol.dataset.movieId ; // Assume movie ID is stored in a data attribute
-
-    // console.log('movieId: '+ movieId);
-    // if(movieId != null){
-    //     // Logic to show the movie details
-    //     return selectedCol.onclick(); // Call a function to display movie details
-    // }
-    if (selectedCol) {
-        selectedCol.click(); // This simulates a user clicking the element
-    }
-}
+// function selectMovie() {
+//     const rows = viewList[currentViewName].querySelectorAll('.selectableRow');
+//     const currentRow = rows[currentRowIndex];
+//     const cols = currentRow.querySelectorAll('.selectableCol');
+//
+//     // Get the currently selected movie
+//     const selectedCol = cols[currentColIndex];
+//     // const movieId = selectedCol.dataset.movieId ; // Assume movie ID is stored in a data attribute
+//
+//     // console.log('movieId: '+ movieId);
+//     // if(movieId != null){
+//     //     // Logic to show the movie details
+//     //     return selectedCol.onclick(); // Call a function to display movie details
+//     // }
+//     if (selectedCol) {
+//         selectedCol.click(); // This simulates a user clicking the element
+//     }
+// }
 
 // Continue with your existing showMovieDetails and other functions...
 
 
-function displayMovies(categories, categoriesContainer) {
-
-    categoriesContainer.innerHTML = ''; // Clear previous movies
-    if (!Array.isArray(categories)) {
-        categories = [categories];
-        console.log('not array size: '+ categories.size);
-    }
-    categories.forEach(cat => {
-        let categoryContainer = generateSearchResultView(cat);
-        categoriesContainer.appendChild(categoryContainer);
-    });
-
-
-    // Focus the first movie card in the first category, if any
-    if (categoriesContainer.firstChild && categoriesContainer.firstChild.querySelector('.movie-card')) {
-        categoriesContainer.firstChild.querySelector('.movie-card').focus();
-    }
-}
+// function displayMovies(categories, categoriesContainer) {
+//
+//     categoriesContainer.innerHTML = ''; // Clear previous movies
+//     if (!Array.isArray(categories)) {
+//         categories = [categories];
+//         console.log('not array size: '+ categories.size);
+//     }
+//     categories.forEach(cat => {
+//         var categoryContainer = generateSearchResultView(cat);
+//         categoriesContainer.appendChild(categoryContainer);
+//     });
+//
+//
+//     // Focus the first movie card in the first category, if any
+//     if (categoriesContainer.firstChild && categoriesContainer.firstChild.querySelector('.movie-card')) {
+//         categoriesContainer.firstChild.querySelector('.movie-card').focus();
+//     }
+// }
 
 function generateSearchResultView(category) {
 // Add the category container to the main categories container
     const categoryDiv = document.createElement('div');
     categoryDiv.classList.add('category');
     categoryDiv.classList.add('selectableRow');
-    let categoryTitleView = document.createElement('h2');
+    var categoryTitleView = document.createElement('h2');
     categoryTitleView.innerText = category.category;
     categoryDiv.appendChild(categoryTitleView);
 
-    let movieListView = generateMovieListView(category.result);
+    var movieListView = generateMovieListView(category.result);
     categoryDiv.appendChild(movieListView);
 
     return categoryDiv;
@@ -450,7 +450,7 @@ function generateCategoryView_old(category) {
     movieList.classList.add('movie-list'); // Add class to apply any horizontal scrolling styles if needed
 
     // Add each movie card to the movie list
-    let movieCounter = 1;
+    var movieCounter = 1;
     // category.sublist.forEach(movie => {
     category.forEach(movie => {
         const movieCard = document.createElement('div');
@@ -482,7 +482,7 @@ function generateCategoryView_old(category) {
 
 function generateSublistView(view, type, movies) {
     // Create a container for the category
-    let categoryContainer = view.querySelector('#sublistContainer');
+    var categoryContainer = view.querySelector('#sublistContainer');
     if (currentViewName !== 'Main') {
         categoryContainer.innerHTML = '';
     }
@@ -493,13 +493,13 @@ function generateSublistView(view, type, movies) {
     // categoryContainer.dataset.categoryIndex = categoryCounter++;
 
     // Create and add the category title
-    let categoryTitle = document.createElement('h2');
+    var categoryTitle = document.createElement('h2');
     categoryTitle.innerText = type;
     categoryContainer.appendChild(categoryTitle);
 
 
     // Create a container for the movies in this category
-    let movieList = generateMovieListView(movies);
+    var movieList = generateMovieListView(movies);
     // Add the movie list to the category container
     categoryContainer.appendChild(movieList);
 
@@ -508,20 +508,20 @@ function generateSublistView(view, type, movies) {
 
 function generateMovieListView(movies) {
     // Create a container for the movies in this category
-    let movieList = document.createElement('div');
+    var movieList = document.createElement('div');
     movieList.classList.add('movie-list'); // Add class to apply any horizontal scrolling styles if needed
     movies.forEach(movie => {
-        let movieCard = generateMovieCard(movie)
+        var movieCard = generateMovieCard(movie)
         movieList.appendChild(movieCard);
     });
     return movieList
 }
 
 function generateMovieCard(movie) {
-    let movieCard = document.createElement('div');
+    var movieCard = document.createElement('div');
     movieCard.classList.add('movie-card'); // Add class for identification
     movieCard.classList.add('selectableCol');
-    let image = movie.cardImage;
+    var image = movie.cardImage;
     if (image == null) {
         image = movie.tvgLogo;
     }
@@ -535,11 +535,11 @@ function generateMovieCard(movie) {
 
 function goBack() {
     console.log(viewWorkflow);
-    let lastView = viewWorkflow.pop();
+    var lastView = viewWorkflow.pop();
     console.log('goback:lastView: ' + lastView.view);
     // console.log(viewWorkflow);
     viewList[lastView.view].style.display = 'none';
-    let previousView = viewWorkflow[viewWorkflow.length - 1];
+    var previousView = viewWorkflow[viewWorkflow.length - 1];
     console.log('goback:previousView: ' + previousView.view);
     viewList[previousView.view].style.display = 'block';
     currentViewName = previousView.view;
@@ -583,7 +583,7 @@ function handleBackPress() {
 function showMovieDetails(movie) {
     // mainView.style.display = 'none'; // Hide main view
     // detailsView.style.display = 'block'; // Show detail view
-    let type = movie.type;
+    var type = movie.type;
     if (type == 'Iptv_channel') {
         type = 'Video';
     }
@@ -599,7 +599,7 @@ function showMovieDetails(movie) {
     }
     // type = type.toLowerCase();
     console.log('movie type: ' + type);
-    let view = viewList[type];
+    var view = viewList[type];
     if (view === null) {
         console.log('unknown movie type: ' + type);
         return;
@@ -629,8 +629,8 @@ function showMovieDetails(movie) {
 // webapis.avplay.open('https://www.w3schools.com/html/mov_bbb.mp4');
 // webapis.avplay.play();
 
-        // let videoElement = view.querySelector('video');
-        // let videoSource = document.createElement('source');
+        // var videoElement = view.querySelector('video');
+        // var videoSource = document.createElement('source');
         // videoSource.src = movie.url;
         // videoSource.type = 'video/mp4';
 
@@ -672,10 +672,10 @@ function showMovieDetails(movie) {
         //     .catch(error => {
         //         console.error('There was a problem with the fetch operation:', error);
         //     });
-// 
-// 
+//
+//
         // videoPlayer.appendChild(videoSource);
-        // updateFocus(0,0); 
+        // updateFocus(0,0);
         showView(type);
         playMovie(movie);
         return;
@@ -692,14 +692,14 @@ function showMovieDetails(movie) {
 
     view.querySelector('#title').innerHTML = `<h4>${movie.title}</h4>`;
 
-    let image = movie.cardImage;
+    var image = movie.cardImage;
     if (image == null) {
         image = movie.tvgLogo;
     }
     view.querySelector('#image').src = image;
 
     view.querySelector('#description').innerText = movie.description;
-    let url = movie.videoUrl;
+    var url = movie.videoUrl;
     if (url == null) {
         url = movie.url;
     }
@@ -719,7 +719,7 @@ function showMovieDetails(movie) {
     });
 
 
-    // let category = {
+    // var category = {
     //     title: type,
     //     sublist: movie.sublist
     // };
@@ -737,7 +737,7 @@ function showMovieDetails(movie) {
 
 function showView(type) {
     console.log("showView: " + type);
-    let found = false;
+    var found = false;
     Object.keys(viewList).forEach(name => {
         if (type === name) {
             console.log("show: " + name);
@@ -745,7 +745,7 @@ function showView(type) {
             currentViewName = name;
 
 
-            let workflowItem = {};
+            var workflowItem = {};
             workflowItem.view = name;
             workflowItem.row = 0;
             workflowItem.col = 0;
@@ -834,11 +834,11 @@ function parseUrlWithParams(input) {
     // Check if the string contains '||'
     if (input.includes('|')) {
         // Split the input into URL and parameters
-        let [url, params] = input.split('|');
+        var [url, params] = input.split('|');
 
         // Split parameters by '&' and then key-value pairs by '='
-        let paramArray = params.split('&').map(param => {
-            let [key, value] = param.split('=');
+        var paramArray = params.split('&').map(param => {
+            var [key, value] = param.split('=');
             return {[key.trim()]: value.trim()};
         });
 
@@ -864,7 +864,7 @@ function playVideoNow(result) {
     // //
     if (result.params.length > 0) {
         result.params.forEach(param => {
-            for (let key in param) {
+            for (var key in param) {
                 if (key.toLowerCase() === 'user-agent') {
                     webapis.avplay.setStreamingProperty('USER_AGENT', param[key]);
                 }
@@ -947,16 +947,16 @@ function playMovie(movie) {
 
 
     // Initialize the AVPlay object
-    // let iptvurl = 'https://airmax.boats:443/airmaxtv1122/airmaxtv2211/306.ts||user-agent=airmaxtv';
-    // let link = 'https://varcdnx10-18.erea12.shop:82/d/nvrtwaiubgeyf3tkampif3ypo4c5b4ajjcpfx2khekomyg5pfa2docvyqvxgfcmhwvuqlovp/_WeCima.Show_Al.Ameel.S01E34.720p.mp4';
+    // var iptvurl = 'https://airmax.boats:443/airmaxtv1122/airmaxtv2211/306.ts||user-agent=airmaxtv';
+    // var link = 'https://varcdnx10-18.erea12.shop:82/d/nvrtwaiubgeyf3tkampif3ypo4c5b4ajjcpfx2khekomyg5pfa2docvyqvxgfcmhwvuqlovp/_WeCima.Show_Al.Ameel.S01E34.720p.mp4';
     // webapis.avplay.open();
 
 
 
-    
+
     // if(movie.type == 'Iptv_channel') {
     //
-    // 	let uri = getFinalVideoUrl(movie.url).then((result) => {
+    // 	var uri = getFinalVideoUrl(movie.url).then((result) => {
     // 		console.log('redirected url2: '+result.url);
     //         console.log(result);
     //         // result.url = resolvedUrl;
@@ -971,7 +971,7 @@ function playMovie(movie) {
     // }
 
 
-    let result = parseUrlWithParams(movie.url);
+    var result = parseUrlWithParams(movie.url);
     playVideoNow(result);
 
     // console.log(result);
@@ -1031,33 +1031,33 @@ function playMovie(movie) {
 
 }
 
-async function getFinalVideoUrl(videoUrl) {
-   return await getRedirectedUrl(videoUrl);
-}
+// async function getFinalVideoUrl(videoUrl) {
+//    return await getRedirectedUrl(videoUrl);
+// }
 
-async function getRedirectedUrl(movieUrl) {
-    try {
-    	const response = await fetch(movieUrl, {
-            method: 'GET',
-            redirect: 'follow',
-            mode: 'cors',
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Linux; Tizen 3.0) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/5.0 Chrome/47.0.2526.69 Mobile Safari/537.36'
-            }
-        });
-    	 if (response.redirected) {
-             console.log('Redirected URL: ', response.redirect)
-             console.log(response.url.replace(/%7C/g, '|'));
-
-             return parseUrlWithParams(response.url.replace(/%7C/g, '|')); // Final resolved URL after redirection
-         } else {
-             console.log("Not redirected, original URL:", movieUrl);
-         }
-    } catch (error) {
-        console.error("Error opening video with redirection:", error);
-        return movieUrl;
-    }
-}
+// async function getRedirectedUrl(movieUrl) {
+//     try {
+//     	const response = await fetch(movieUrl, {
+//             method: 'GET',
+//             redirect: 'follow',
+//             mode: 'cors',
+//             headers: {
+//                 'User-Agent': 'Mozilla/5.0 (Linux; Tizen 3.0) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/5.0 Chrome/47.0.2526.69 Mobile Safari/537.36'
+//             }
+//         });
+//     	 if (response.redirected) {
+//              console.log('Redirected URL: ', response.redirect)
+//              console.log(response.url.replace(/%7C/g, '|'));
+//
+//              return parseUrlWithParams(response.url.replace(/%7C/g, '|')); // Final resolved URL after redirection
+//          } else {
+//              console.log("Not redirected, original URL:", movieUrl);
+//          }
+//     } catch (error) {
+//         console.error("Error opening video with redirection:", error);
+//         return movieUrl;
+//     }
+// }
 
 
 
@@ -1067,9 +1067,32 @@ async function getRedirectedUrl(movieUrl) {
 // const url = 'https://gist.githubusercontent.com/deepakpk009/99fd994da714996b296f11c3c371d5ee/raw/28c4094ae48892efb71d5122c1fd72904088439b/media.json'
 // const url = "http://194.164.53.40/movie/search/sonic";
 
+
+function test() {
+    const element = document.getElementById('myElement');
+    element.textContent = 'Element modified by JavaScript! 3333';
+    element.style.color = 'blue';
+    element.style.fontSize = '30px';
+
+
+    // Find the element with the id 'searchView'
+    // var searchViewElement = document.getElementById('searchView');
+    // var keyViewElement = document.getElementById('keyView');
+    // keyViewElement.innerHTML = 'eeeeeeeee';
+
+// Check if the element exists
+    if (element) {
+        // Add the class 'highlighted' to the element
+        if (element.classList) {
+            element.classList.add('highlighted');
+        }
+    }
+}
+document.addEventListener('DOMContentLoaded', (event) => {
+
 fetchData(homepageUrl).then(data => {
     if (data) {
-    let categoriesContainer = viewList['Main'].querySelector('#categoriesContainer');
+    var categoriesContainer = viewList['Main'].querySelector('#categoriesContainer');
 
         // console.log(data); // Handle the fetched data
         // // Example: Access the title of the first result
@@ -1077,6 +1100,8 @@ fetchData(homepageUrl).then(data => {
     }
 });
 
-// let urr = getFinalVideoUrl(fetchUrl + '476.ts');
+// var urr = getFinalVideoUrl(fetchUrl + '476.ts');
 // console.log(urr);
-updateFocus(0, 0);
+// updateFocus(0, 0);
+    test();
+});

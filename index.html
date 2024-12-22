@@ -1,27 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie App</title>
+    <title>Tizen TV App</title>
+    <script src="js/script_2.js" defer></script>
     <link rel="stylesheet" href="css/style.css">
-    <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
-
+    <style>
+        #myElement {
+            color: black;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div id="mainView">
-        <div id="searchView" class="selectableRow">
-            <input type="text" id="searchField" placeholder="Search Movies..." class="selectableCol">
-            <button id="searchButton" class="selectableCol">Search</button>
-            <p id="keyView"></p>
-        </div>
-        <div id="categoriesContainer"></div>
+
+<div id="mainView">
+    <div id="searchView" class="selectableRow">
+        <label for="searchField">search</label><input type="text" id="searchField" placeholder="Search Movies..."
+                                                      class="selectableCol">
+        <button id="searchButton" class="selectableCol">Search</button>
+        <p id="keyView"></p>
     </div>
+    <div id="categoriesContainer"></div>
+</div>
+
 
     <div id="searchResultView">
         <div id="categoriesContainer"></div>
     </div>
- 
+
 <div id="seriesView" style="display: none;">
     <img id="image" alt="Movie Poster">
     <h2 id="title"></h2>
@@ -61,6 +67,73 @@
 <div id="browseView" style="display: none; position: relative;">
 </div>
 
-    <script src="js/script.js"></script>
 </body>
 </html>
+
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Movie App</title>-->
+<!--    <link rel="stylesheet" href="css/style.css">-->
+<!--&lt;!&ndash;    <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>&ndash;&gt;-->
+
+<!--</head>-->
+<!--<body>-->
+<!--    <div id="mainView">-->
+<!--        <div id="searchView" class="selectableRow">-->
+<!--            <label for="searchField">search</label><input type="text" id="searchField" placeholder="Search Movies..." class="selectableCol">-->
+<!--            <button id="searchButton" class="selectableCol">Search</button>-->
+<!--            <p id="keyView"></p>-->
+<!--        </div>-->
+<!--        <div id="categoriesContainer"></div>-->
+<!--    </div>-->
+
+<!--    <div id="searchResultView">-->
+<!--        <div id="categoriesContainer"></div>-->
+<!--    </div>-->
+<!-- -->
+<!--<div id="seriesView" style="display: none;">-->
+<!--    <img id="image" alt="Movie Poster">-->
+<!--    <h2 id="title"></h2>-->
+<!--    <p id="description"></p>-->
+<!--    <div id="sublistContainer"></div>-->
+<!--</div>-->
+<!--<div id="seasonView" style="display: none;">-->
+<!--    <img id="image" alt="Movie Poster">-->
+<!--    <h2 id="title"></h2>-->
+<!--    <p id="description"></p>-->
+<!--    <div id="sublistContainer"></div>-->
+<!--</div>-->
+
+<!--<div id="episodeView" style="display: none;">-->
+<!--    <img id="image" alt="Movie Poster">-->
+<!--    <h2 id="title"></h2>-->
+<!--    <p id="description"></p>-->
+<!--    <div id="sublistContainer"></div>-->
+<!--</div>-->
+
+<!--<div id="filmView" style="display: none;">-->
+<!--    <img id="image" alt="Movie Poster">-->
+<!--    <h2 id="title"></h2>-->
+<!--    <p id="description"></p>-->
+<!--    <div id="sublistContainer"></div>-->
+<!--</div>-->
+
+<!--<div id="videoView" style="display: none; position: relative;">-->
+<!--    &lt;!&ndash; <h2 id="episodeTitle"></h2>-->
+<!--    <p id="episodeDescription"></p>-->
+<!--    <div id="resolutionsContainer"></div> &ndash;&gt;-->
+<!--    &lt;!&ndash; <video id="videoPlayer" controls autoplay>-->
+<!--        <source src="https://airmax.boats:443/airmaxtv1122/airmaxtv2211/306.ts">-->
+<!--      </video> &ndash;&gt;-->
+<!--</div>-->
+
+<!--<div id="browseView" style="display: none; position: relative;">-->
+<!--</div>-->
+
+<!--    <script src="js/script_2.js"></script>-->
+<!--</body>-->
+<!--</html>-->

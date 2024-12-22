@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns:tizen="http://tizen.org/ns/widgets" xmlns="http://www.w3.org/ns/widgets" id="http://www.omerFlex.de" version="1.0.0" viewmodes="maximized">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://www.omerFlex.de" version="1.0.0" viewmodes="maximized">
     <access origin="*" subdomains="true"></access>
-    <tizen:application id="D4PLlQ9f5e.OmerFlex" package="D4PLlQ9f5e" required_version="2.1"/>
-    <author href="https://www.omerflex.de" email="freesyriar1@gmail.com">mmss</author>
+    <tizen:application id="D4PLlQ9f5e.OmerFlex" package="D4PLlQ9f5e" required_version="1.1"/>
+    <author href="https://www.omerflex.de" email="freesyriar2@gmail.com">mmss</author>
     <content src="index.html"/>
     <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
     <icon src="icon.png"/>
