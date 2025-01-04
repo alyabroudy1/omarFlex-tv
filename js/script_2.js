@@ -727,10 +727,11 @@ function test() {
 
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    fetchData(homepageUrl).then(function(data) {
+   let url = 'http://194.164.53.40/movie/fetch/17302';
+    fetchData(url).then(function(data) {
         if (data) {
             var categoriesContainer = viewList['Main'].querySelector('#categoriesContainer');
-
+console.log(data);
             // var element = document.getElementById('myElement');
             // element.textContent = 'Element size ' + data.length;
 
