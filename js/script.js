@@ -403,7 +403,7 @@ function displayMovies(categories, categoriesContainer) {
     categoriesContainer.innerHTML = ''; // Clear previous movies
     if (!Array.isArray(categories)) {
         categories = [categories];
-        console.log('not array size: '+ categories.size);
+        console.log('not array size: ' + categories.size);
     }
     categories.forEach(cat => {
         let categoryContainer = generateSearchResultView(cat);
@@ -419,6 +419,8 @@ function displayMovies(categories, categoriesContainer) {
 
 function generateSearchResultView(category) {
 // Add the category container to the main categories container
+    console.log('generateSearchResultView');
+    // console.log(category);
     const categoryDiv = document.createElement('div');
     categoryDiv.classList.add('category');
     categoryDiv.classList.add('selectableRow');
@@ -497,7 +499,6 @@ function generateSublistView(view, type, movies) {
     categoryTitle.innerText = type;
     categoryContainer.appendChild(categoryTitle);
 
-
     // Create a container for the movies in this category
     let movieList = generateMovieListView(movies);
     // Add the movie list to the category container
@@ -510,7 +511,12 @@ function generateMovieListView(movies) {
     // Create a container for the movies in this category
     let movieList = document.createElement('div');
     movieList.classList.add('movie-list'); // Add class to apply any horizontal scrolling styles if needed
+
+    // console.log('generateSublistView');
+    // console.log(movies);
     movies.forEach(movie => {
+        // console.log('generateSublistView2');
+        // console.log(movies);
         let movieCard = generateMovieCard(movie)
         movieList.appendChild(movieCard);
     });
@@ -534,13 +540,13 @@ function generateMovieCard(movie) {
 
 
 function goBack() {
-    console.log(viewWorkflow);
-    let lastView = viewWorkflow.pop();
-    console.log('goback:lastView: ' + lastView.view);
     // console.log(viewWorkflow);
+    let lastView = viewWorkflow.pop();
+    // console.log('goback:lastView: ' + lastView.view);
+    // // console.log(viewWorkflow);
     viewList[lastView.view].style.display = 'none';
     let previousView = viewWorkflow[viewWorkflow.length - 1];
-    console.log('goback:previousView: ' + previousView.view);
+    // console.log('goback:previousView: ' + previousView.view);
     viewList[previousView.view].style.display = 'block';
     currentViewName = previousView.view;
     // updateFocus(0,0);
@@ -548,18 +554,18 @@ function goBack() {
 
 function handleBackPress() {
     // Check if user is in the main view
-    console.log('handleBackPress: ' + getCurrentViewWorkflow().view + ', count: ' + backPressCount);
+    // console.log('handleBackPress: ' + getCurrentViewWorkflow().view + ', count: ' + backPressCount);
     if (getCurrentViewWorkflow().view === 'Main' || getCurrentViewWorkflow().view === 'Video') {
         if (backPressCount === 0) {
             backPressCount += 1;
-            console.log("Press back again to exit.");
+            // console.log("Press back again to exit.");
             // Start a timer to reset the backPressCount after 1 second
             backPressTimer = setTimeout(() => {
                 backPressCount = 0;
             }, 1000);
         } else {
             if (getCurrentViewWorkflow().view === 'Video') {
-                console.log('handleBackPress: ' + getCurrentViewWorkflow().view + ', count: ' + backPressCount);
+                // console.log('handleBackPress: ' + getCurrentViewWorkflow().view + ', count: ' + backPressCount);
                 // videoPlayer.pause();
                 webapis.avplay.stop();
                 if (document.fullscreenElement) {
@@ -591,17 +597,17 @@ function showMovieDetails(movie) {
     // console.log(movie);
     if (type == null) {
         type = movie.state;
-        console.log('movie state: ' + type);
+        // console.log('movie state: ' + type);
     }
     if (type == null) {
-        console.log('unknown movie type');
+        // console.log('unknown movie type');
         return;
     }
     // type = type.toLowerCase();
-    console.log('movie type: ' + type);
+    // console.log('movie type: ' + type);
     let view = viewList[type];
     if (view === null) {
-        console.log('unknown movie type: ' + type);
+        // console.log('unknown movie type: ' + type);
         return;
     }
 
@@ -681,11 +687,11 @@ function showMovieDetails(movie) {
         return;
     }
     if (!showView(type)) {
-        console.log('unknown view: ' + type);
+        // console.log('unknown view: ' + type);
         return;
     }
     if (type === 'Browse') {
-        console.log('view: ' + type);
+        // console.log('view: ' + type);
         return;
     }
 
@@ -701,18 +707,24 @@ function showMovieDetails(movie) {
     view.querySelector('#description').innerText = movie.description;
     let url = movie.videoUrl;
     if (url == null) {
-        url = movie.url;
+        // url = movie.url;
+        url = fetchUrl + movie.id;
     }
+    // console.log(url)
 
+    // if (
+    //     type == 'Film'
+    // ) {
+    //     url = movie.link.url;
+    // }
     // fetchData(fetchUrl + movie.id + '?tv=true').then(data => {
     fetchData(url).then(data => {
         if (data) {
-            console.log(data); // Handle the fetched data
             if (data == null || data.length === 0) {
                 return;
             }
 
-            generateSublistView(view, type, data);
+            generateSublistView(view, type, data.result);
 
             updateFocus(0, 0);
         }
@@ -736,11 +748,11 @@ function showMovieDetails(movie) {
 }
 
 function showView(type) {
-    console.log("showView: " + type);
+    // console.log("showView: " + type);
     let found = false;
     Object.keys(viewList).forEach(name => {
         if (type === name) {
-            console.log("show: " + name);
+            // console.log("show: " + name);
             viewList[name].style.display = 'block';
             currentViewName = name;
 
@@ -791,7 +803,7 @@ async function fetchData(url) {
 function setAVPlayerListeners() {
     var listener = {
         onbufferingstart: function () {
-            console.log("Buffering start.");
+            // console.log("Buffering start.");
         },
 
         onbufferingprogress: function (percent) {
@@ -799,10 +811,10 @@ function setAVPlayerListeners() {
         },
 
         onbufferingcomplete: function () {
-            console.log("Buffering complete.");
+            // console.log("Buffering complete.");
         },
         onstreamcompleted: function () {
-            console.log("Stream Completed");
+            // console.log("Stream Completed");
             webapis.avplay.stop();
         },
 
@@ -811,6 +823,7 @@ function setAVPlayerListeners() {
         },
 
         onerror: function (eventType) {
+            alert('حدث خطأ')
             console.log("event type error : " + eventType);
         },
 
@@ -853,6 +866,7 @@ function parseUrlWithParams(input) {
         };
     }
 }
+
 function playVideoNow(result) {
     console.log("playVideoNow: ");
     console.log(result.url);
@@ -883,6 +897,7 @@ function playVideoNow(result) {
         console.error('Error preparing AVPlay:', error);
     });
 }
+
 function playMovie(movie) {
 
     var objElem = document.createElement('object');
@@ -952,8 +967,6 @@ function playMovie(movie) {
     // webapis.avplay.open();
 
 
-
-    
     // if(movie.type == 'Iptv_channel') {
     //
     // 	let uri = getFinalVideoUrl(movie.url).then((result) => {
@@ -1032,12 +1045,12 @@ function playMovie(movie) {
 }
 
 async function getFinalVideoUrl(videoUrl) {
-   return await getRedirectedUrl(videoUrl);
+    return await getRedirectedUrl(videoUrl);
 }
 
 async function getRedirectedUrl(movieUrl) {
     try {
-    	const response = await fetch(movieUrl, {
+        const response = await fetch(movieUrl, {
             method: 'GET',
             redirect: 'follow',
             mode: 'cors',
@@ -1045,14 +1058,14 @@ async function getRedirectedUrl(movieUrl) {
                 'User-Agent': 'Mozilla/5.0 (Linux; Tizen 3.0) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/5.0 Chrome/47.0.2526.69 Mobile Safari/537.36'
             }
         });
-    	 if (response.redirected) {
-             console.log('Redirected URL: ', response.redirect)
-             console.log(response.url.replace(/%7C/g, '|'));
+        if (response.redirected) {
+            console.log('Redirected URL: ', response.redirect)
+            console.log(response.url.replace(/%7C/g, '|'));
 
-             return parseUrlWithParams(response.url.replace(/%7C/g, '|')); // Final resolved URL after redirection
-         } else {
-             console.log("Not redirected, original URL:", movieUrl);
-         }
+            return parseUrlWithParams(response.url.replace(/%7C/g, '|')); // Final resolved URL after redirection
+        } else {
+            console.log("Not redirected, original URL:", movieUrl);
+        }
     } catch (error) {
         console.error("Error opening video with redirection:", error);
         return movieUrl;
@@ -1060,17 +1073,16 @@ async function getRedirectedUrl(movieUrl) {
 }
 
 
-
-
 // Example usage
 // const url = 'https://raw.githubusercontent.com/alyabroudy1/omerFlex-php/refs/heads/main/test-search.json'; // Replace with your actual URL
 // const url = 'https://gist.githubusercontent.com/deepakpk009/99fd994da714996b296f11c3c371d5ee/raw/28c4094ae48892efb71d5122c1fd72904088439b/media.json'
 // const url = "http://194.164.53.40/movie/search/sonic";
 
+// let url = 'http://194.164.53.40/movie/fetch/17302';
 fetchData(homepageUrl).then(data => {
     if (data) {
     let categoriesContainer = viewList['Main'].querySelector('#categoriesContainer');
-
+        console.log(data);
         // console.log(data); // Handle the fetched data
         // // Example: Access the title of the first result
         displayMovies(data, categoriesContainer);
@@ -1080,3 +1092,15 @@ fetchData(homepageUrl).then(data => {
 // let urr = getFinalVideoUrl(fetchUrl + '476.ts');
 // console.log(urr);
 updateFocus(0, 0);
+
+// test searching
+// fetchData(searchUrl + 'spider').then(data => {
+//     if (data) {
+//         let categoriesContainer = viewList['Search'].querySelector('#categoriesContainer');
+//         showView('Search');
+//         console.log(data); // Handle the fetched data
+//         // Example: Access the title of the first result
+//         displayMovies(data, categoriesContainer);
+//         updateFocus(0, 0);
+//     }
+// });
